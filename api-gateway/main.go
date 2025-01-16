@@ -1,13 +1,14 @@
 package main
 
 import (
+	"api-gateway/weblib"
 	//"api-gateway/services/comment"
 	//"api-gateway/services/fav"
 	//"api-gateway/services/feed"
 	//message "api-gateway/services/message"
 	//"api-gateway/services/publish"
 	//"api-gateway/services/relation"
-	//"api-gateway/services/user"
+	"api-gateway/services/user"
 	//"api-gateway/weblib"
 	//"api-gateway/wrappers"
 	"github.com/micro/go-micro/v2"
@@ -23,12 +24,12 @@ func main() {
 		registry.Addrs("127.0.0.1:2379"),
 	)
 	// 用户
-	//userMicroService := micro.NewService(
-	//	micro.Name("userService.client"),
-	//	micro.WrapClient(wrappers.NewUserWrapper),
-	//)
-	//// 用户服务调用实例
-	//userService := user.NewUserService("rpcUserService", userMicroService.Client())
+	userMicroService := micro.NewService(
+		micro.Name("userService.client"),
+		micro.WrapClient(wrappers.NewUserWrapper),
+	)
+	// 用户服务调用实例
+	userService := user.NewUserService("rpcUserService", userMicroService.Client())
 	//
 	//// publish
 	//publishMicroService := micro.NewService(
@@ -76,8 +77,8 @@ func main() {
 	////message
 	//messageService := message.NewMessageService("rpcMessageService", messageMicroService.Client())
 	//
-	//serviceMap := make(map[string]interface{})
-	//serviceMap["userService"] = userService
+	serviceMap := make(map[string]interface{})
+	serviceMap["userService"] = userService
 	//serviceMap["publishService"] = publishService
 	//serviceMap["feedService"] = feedService
 	//serviceMap["favoriteService"] = favoriteService
@@ -85,18 +86,18 @@ func main() {
 	//serviceMap["relationService"] = relationService
 	//serviceMap["messageService"] = messageService
 	//
-	////创建微服务实例，使用gin暴露http接口并注册到etcd
-	//server := web.NewService(
-	//	web.Name("httpService"),
-	//	web.Address("127.0.0.1:4000"),
-	//	//将服务调用实例使用gin处理
-	//	web.Handler(weblib.NewRouter(serviceMap)),
-	//	web.Registry(etcdReg),
-	//	web.RegisterTTL(time.Second*300),
-	//	web.RegisterInterval(time.Second*150),
-	//	web.Metadata(map[string]string{"protocol": "http"}),
-	//)
-	////接收命令行参数
-	//_ = server.Init()
-	//_ = server.Run()
+	//创建微服务实例，使用gin暴露http接口并注册到etcd
+	server := web.NewService(
+		web.Name("httpService"),
+		web.Address("127.0.0.1:4000"),
+		//将服务调用实例使用gin处理
+		web.Handler(weblib.NewRouter(serviceMap)),
+		web.Registry(etcdReg),
+		web.RegisterTTL(time.Second*300),
+		web.RegisterInterval(time.Second*150),
+		web.Metadata(map[string]string{"protocol": "http"}),
+	)
+	//接收命令行参数
+	_ = server.Init()
+	_ = server.Run()
 }

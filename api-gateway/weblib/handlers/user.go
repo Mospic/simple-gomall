@@ -12,10 +12,11 @@ import (
 
 // 用户注册
 func Register(ginCtx *gin.Context) {
-	var userReq user.DouyinUserRegisterRequest
+	var userReq user.RegisterReq
 	//获取用户名和密码
-	userReq.Username = ginCtx.Query("username")
+	userReq.Email = ginCtx.Query("email")
 	userReq.Password = ginCtx.Query("password")
+	userReq.ConfirmPassword = ginCtx.Query("confirm_password")
 
 	// 从gin.Key中取出服务实例
 	userService := ginCtx.Keys["userService"].(user.UserService)
@@ -32,11 +33,8 @@ func Register(ginCtx *gin.Context) {
 	}
 
 	//返回
-	ginCtx.JSON(http.StatusOK, user.DouyinUserRegisterResponse{
-		StatusCode: userResp.StatusCode,
-		StatusMsg:  userResp.StatusMsg,
-		UserId:     userResp.UserId,
-		Token:      token,
+	ginCtx.JSON(http.StatusOK, user.RegisterResp{
+		UserId: userResp.UserId,
 	})
 }
 
@@ -68,7 +66,7 @@ func Login(ginCtx *gin.Context) {
 	})
 }
 
-//获取用户的详细信息
+// 获取用户的详细信息
 func UserInfo(ginCtx *gin.Context) {
 	var userReq user.DouyinUserRequest
 	//将获取到的user_id转换成int类型

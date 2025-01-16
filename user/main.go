@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 	"user/utils/redis"
 
@@ -20,7 +19,6 @@ func main() {
 	etcdReg := etcd.NewRegistry(
 		registry.Addrs("127.0.0.1:2379"),
 	)
-	fmt.Println("Successfully register etcd")
 
 	microService := micro.NewService(
 		micro.Name("rpcUserService"), // 微服务名字
@@ -29,7 +27,6 @@ func main() {
 		micro.RegisterTTL(24*time.Hour), // TTL时间
 		micro.Metadata(map[string]string{"protocol": "http"}),
 	)
-	fmt.Println("Successfully connected to microService")
 
 	microService.Init()
 
