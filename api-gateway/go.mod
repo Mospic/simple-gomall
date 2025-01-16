@@ -3,9 +3,12 @@ module api-gateway
 go 1.23.3
 
 require (
+	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.10.0
+	github.com/golang/protobuf v1.5.4
 	github.com/micro/go-micro/v2 v2.9.1
+	google.golang.org/protobuf v1.34.1
 )
 
 require (
@@ -32,7 +35,6 @@ require (
 	github.com/go-playground/validator/v10 v10.20.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/gogo/protobuf v1.2.1 // indirect
-	github.com/golang/protobuf v1.5.0 // indirect
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hpcloud/tail v1.0.0 // indirect
@@ -77,7 +79,6 @@ require (
 	golang.org/x/tools v0.6.0 // indirect
 	google.golang.org/genproto v0.0.0-20191216164720-4f79533eabd1 // indirect
 	google.golang.org/grpc v1.26.0 // indirect
-	google.golang.org/protobuf v1.34.1 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
