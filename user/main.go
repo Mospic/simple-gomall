@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
+	"time"
 	"user/utils/redis"
 
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
 	"user/conf"
-	//"user/core"
-	"user/services"
+	"user/core"
+	services "user/services"
 )
 
 func main() {
@@ -24,7 +25,8 @@ func main() {
 	microService := micro.NewService(
 		micro.Name("rpcUserService"), // 微服务名字
 		micro.Address("127.0.0.1:8082"),
-		micro.Registry(etcdReg), // etcd注册件
+		micro.Registry(etcdReg),         // etcd注册件
+		micro.RegisterTTL(24*time.Hour), // TTL时间
 		micro.Metadata(map[string]string{"protocol": "http"}),
 	)
 	fmt.Println("Successfully connected to microService")
