@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"fmt"
 	"user/model"
 	services "user/services"
 	"user/utils/sha256"
@@ -65,8 +66,8 @@ func (*UserService) Register(ctx context.Context, req *services.RegisterReq, res
 	}
 	//
 	////调用数据库方法，查询是否有同名实体
-	if _, err := model.NewUserDao().FindUserByEmail(email); err == nil {
-		resp.UserId = -1
+	if user, err := model.NewUserDao().FindUserByEmail(email); err == nil {
+		resp.UserId = user.UserId
 		return nil
 	}
 	//
@@ -74,7 +75,7 @@ func (*UserService) Register(ctx context.Context, req *services.RegisterReq, res
 	user := &model.User{
 		Email:    email,
 		Password: sha256.Sha256(password),
-		Name:     "",
+		Name:     email,
 	}
 	//
 	////调用数据库方法，创建一个新的User实体
@@ -91,6 +92,7 @@ func (*UserService) Register(ctx context.Context, req *services.RegisterReq, res
 	//resp.StatusCode = 0
 	//resp.StatusMsg = "注册成功"
 	resp.UserId = user.UserId
+	fmt.Println("Success register user:", user)
 	//resp.Token = ""
 	return nil
 }
