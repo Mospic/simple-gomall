@@ -8,12 +8,12 @@ import (
 var jwtSecret = []byte("1122233")
 
 type Claims struct {
-	Id int64 `json:"id"`
+	Id int32 `json:"id"`
 	jwt.StandardClaims
 }
 
 // 签发用户token
-func GenerateToken(id int64) (string, error) {
+func GenerateToken(id int32) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(2 * time.Hour)
 	claims := Claims{
