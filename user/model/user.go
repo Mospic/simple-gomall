@@ -7,8 +7,8 @@ import (
 
 type User struct {
 	gorm.Model
-	UserId   int32  `gorm:"primary_key;auto_increment"`
-	Email    string `gorm:"type:varchar(255);unique"`
+	UserId   int32  `gorm:"auto_increment"`
+	Email    string `gorm:"primary_key;type:varchar(255)"`
 	Name     string `gorm:"default:(-)"`
 	Password string `gorm:"default:(-)"`
 }
