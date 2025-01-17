@@ -8,11 +8,7 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang/protobuf v1.5.4
 	github.com/micro/go-micro/v2 v2.9.1
-<<<<<<< HEAD
-	google.golang.org/protobuf v1.34.1
-=======
 	google.golang.org/protobuf v1.36.3
->>>>>>> c17bcb1179efba304c408856318b693d3faf3def
 )
 
 require (

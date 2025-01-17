@@ -9,13 +9,7 @@ import (
 	//message "api-gateway/services/message"
 	//"api-gateway/services/publish"
 	//"api-gateway/services/relation"
-<<<<<<< HEAD
-	//"api-gateway/services/user"
-	//"api-gateway/weblib"
-=======
-	"api-gateway/services/user"
-	"api-gateway/weblib"
->>>>>>> c17bcb1179efba304c408856318b693d3faf3def
+
 	"api-gateway/wrappers"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
@@ -28,11 +22,8 @@ func main() {
 	etcdReg := etcd.NewRegistry(
 		registry.Addrs("127.0.0.1:2379"),
 	)
-<<<<<<< HEAD
-	//用户
-=======
 	// 用户
->>>>>>> c17bcb1179efba304c408856318b693d3faf3def
+
 	userMicroService := micro.NewService(
 		micro.Name("userService.client"),
 		micro.WrapClient(wrappers.NewUserWrapper),
