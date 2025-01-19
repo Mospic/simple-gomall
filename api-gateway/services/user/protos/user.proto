@@ -2,28 +2,75 @@ syntax="proto3";
 
 package user;
 
-option go_package="../;proto";
+option go_package="../;user";
 
-service UserService {
-  rpc Register(RegisterReq) returns (RegisterResp) {}
-  rpc Login(LoginReq) returns (LoginResp) {}
+message MallUserRegisterRequest {
+  // @gotags: json:"username"
+  string Username = 1; //注册用户名，最长32个字符
+  // @gotags: json:"password"
+  string Password = 2; //密码，最长32个字符
 }
 
-message RegisterReq {
-  string email = 1;
-  string password = 2;
-  string confirm_password = 3;
+message MallUserRegisterResponse {
+  // @gotags: json:"status_code"
+  int32 StatusCode = 1; //状态码 0-成功 其他值-失败
+  // @gotags: json:"status_msg"
+  string StatusMsg = 2; //返回状态描述
+  // @gotags: json:"user_id"
+  int64 UserId = 3; //用户id
+  // @gotags: json:"token"
+  string Token = 4; //用户鉴权token
 }
 
-message RegisterResp {
-  int32 user_id = 1;
+message MallUserLoginRequest {
+  // @gotags: json:"username"
+  string Username = 1; //注册用户名，最长32个字符
+  // @gotags: json:"password"
+  string Password = 2; //密码，最长32个字符
 }
 
-message LoginReq {
-  string email= 1;
-  string password = 2;
+message MallUserLoginResponse {
+  // @gotags: json:"status_code"
+  int32 StatusCode = 1; //状态码 0-成功 其他值-失败
+  // @gotags: json:"status_msg"
+  string StatusMsg = 2; //返回状态描述
+  // @gotags: json:"user_id"
+  int64 UserId = 3; //用户id
+  // @gotags: json:"token"
+  string Token = 4; //用户鉴权token
 }
 
-message LoginResp {
-  int32 user_id = 1;
+message User {
+  // @gotags: json:"id"
+  int64 Id = 1; //用户id
+  // @gotags: json:"name"
+  string Name = 2; //用户名称
+  // @gotags: json:"follow_count"
+  int64 FollowCount = 3; //关注总数
+  // @gotags: json:"follower_count"
+  int64 FollowerCount = 4; //粉丝总数
+  // @gotags: json:"is_follow"
+  bool IsFollow = 5; //true-已关注，false-未关注
+}
+
+message MallUserRequest {
+  // @gotags: json:"user_id"
+  int64 UserId = 1; //用户id
+  // @gotags: json:"token"
+  string Token = 2; //用户鉴权token
+}
+
+message MallUserResponse {
+  // @gotags: json:"status_code"
+  int32 StatusCode = 1; //状态码 0-成功，其他值-失败
+  // @gotags: json:"status_msg"
+  string StatusMsg = 2; //返回状态描述
+  // @gotags: json:"user"
+  User User = 3; //用户信息
+}
+
+service UserService{
+  rpc Login(MallUserLoginRequest) returns (MallUserLoginResponse);
+  rpc Register(MallUserRegisterRequest) returns(MallUserRegisterResponse);
+  rpc UserInfo(MallUserRequest) returns(MallUserResponse);
 }
