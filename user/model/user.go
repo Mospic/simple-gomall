@@ -1,16 +1,17 @@
 package model
 
 import (
-	"github.com/jinzhu/gorm"
 	"sync"
+	"time"
 )
 
 type User struct {
-	gorm.Model
-	UserId   int32  `gorm:"auto_increment"`
-	Email    string `gorm:"primary_key;type:varchar(255)"`
-	Name     string `gorm:"default:(-)"`
-	Password string `gorm:"default:(-)"`
+	UserId   int32     `gorm:"primary_key;auto_increment"`
+	Email    string    `gorm:"type:varchar(255);unique;not null"`
+	Name     string    `gorm:"default:(-)"`
+	Password string    `gorm:"default:(-)"`
+	CreateAt time.Time `gorm:"not null"`
+	DeleteAt time.Time `gorm:"default:NULL"`
 }
 
 func (User) TableName() string {

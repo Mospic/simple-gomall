@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"fmt"
+	"time"
 	"user/model"
 	services "user/services"
 	"user/utils/sha256"
@@ -76,6 +77,7 @@ func (*UserService) Register(ctx context.Context, req *services.RegisterReq, res
 		Email:    email,
 		Password: sha256.Sha256(password),
 		Name:     email,
+		CreateAt: time.Now(),
 	}
 	//
 	////调用数据库方法，创建一个新的User实体
