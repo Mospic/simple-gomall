@@ -1,5 +1,6 @@
 tmp
 test
+runtime
 .env
 gohub
 .DS_Store

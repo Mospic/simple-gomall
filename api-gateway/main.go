@@ -1,29 +1,24 @@
 package main
 
 import (
-	"api-gateway/services/user"
+	"api-gateway/pkg/utils/redis"
+	user "api-gateway/services/user"
 	"api-gateway/weblib"
-	//"api-gateway/services/comment"
-	//"api-gateway/services/fav"
-	//"api-gateway/services/feed"
-	//message "api-gateway/services/message"
-	//"api-gateway/services/publish"
-	//"api-gateway/services/relation"
-
 	"api-gateway/wrappers"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
 	"github.com/micro/go-micro/v2/web"
+
 	"time"
 )
 
 func main() {
+	redis.InitRedis()
 	etcdReg := etcd.NewRegistry(
 		registry.Addrs("127.0.0.1:2379"),
 	)
 	// 用户
-
 	userMicroService := micro.NewService(
 		micro.Name("userService.client"),
 		micro.WrapClient(wrappers.NewUserWrapper),
