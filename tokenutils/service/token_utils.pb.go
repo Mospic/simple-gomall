@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.28.1
 // 	protoc        v3.20.1
-// source: token_utils.proto
+// source: token_utils.protos
 
 package service
 

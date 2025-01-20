@@ -1,6 +1,7 @@
 package main
 
 import (
+	"api-gateway/pkg/utils/redis"
 	user "api-gateway/services/user"
 	"api-gateway/weblib"
 	"api-gateway/wrappers"
@@ -13,6 +14,7 @@ import (
 )
 
 func main() {
+	redis.InitRedis()
 	etcdReg := etcd.NewRegistry(
 		registry.Addrs("127.0.0.1:2379"),
 	)
