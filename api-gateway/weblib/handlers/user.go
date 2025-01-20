@@ -24,15 +24,15 @@ func Register(ginCtx *gin.Context) {
 
 	//调用user微服务，将context的上下文传入
 	userResp, err := userService.Register(context.Background(), &userReq)
-
 	PanicIfUserError(err)
-	fmt.Printf("User Response:%v", userResp)
+	var token string
 	if userResp != nil && userResp.UserId > 0 { //做一下保护，返回的UserId应该大于0
-		_, err = utils.GenerateToken(userResp.UserId)
+		token, err = utils.GenerateToken(userResp.UserId)
 		PanicIfUserError(err)
 		//返回
 		ginCtx.JSON(http.StatusOK, user.RegisterResp{
 			UserId: userResp.UserId,
+			Token:  token,
 		})
 	} else {
 		ginCtx.JSON(400, gin.H{"error": "Invalid User"})
@@ -55,36 +55,49 @@ func Login(ginCtx *gin.Context) {
 	PanicIfUserError(err)
 
 	//生成token
+	var token string
 	if userResp != nil && userResp.UserId > 0 {
-		_, err = utils.GenerateToken(userResp.UserId)
+		token, err = utils.GenerateToken(userResp.UserId)
 		PanicIfUserError(err)
 
 		ginCtx.JSON(http.StatusOK, user.LoginResp{
 			UserId: userResp.UserId,
+			Token:  token,
 		})
 	} else {
-		ginCtx.JSON(400, gin.H{"error": "Invalid User"})
+		ginCtx.JSON(400, gin.H{"error": "Invalid User"}) // TODO 拓展
 	}
+
+}
+
+func Logout(ginCtx *gin.Context) {
+
+}
+
+func UpdateUser(ginCtx *gin.Context) {
+
+}
+
+func DeleteUser(ginCtx *gin.Context) {
 
 }
 
 // // 获取用户的详细信息
 func UserInfo(ginCtx *gin.Context) {
-	//var userReq user.DouyinUserRequest
-	////将获取到的user_id转换成int类型
-	//user_id, err := strconv.ParseInt(ginCtx.Query("user_id"), 10, 64)
-	//PanicIfUserError(err)
-	//
-	//userReq.UserId = user_id
-	//userReq.Token = ginCtx.Query("token")
-	//
-	//userService := ginCtx.Keys["userService"].(user.UserService)
-	//userResp, err := userService.UserInfo(context.Background(), &userReq)
-	//PanicIfUserError(err)
-	//
-	//ginCtx.JSON(http.StatusOK, user.DouyinUserResponse{
-	//	StatusCode: userResp.StatusCode,
-	//	StatusMsg:  userResp.StatusMsg,
-	//	User:       userResp.User,
-	//})
+	var userReq user.UserReq
+	//将获取到的user_id转换成int类型
+	if err := ginCtx.ShouldBindJSON(&userReq); err != nil {
+		fmt.Println(err)
+		ginCtx.JSON(400, gin.H{"error": "Invalid JSON"})
+		return
+	}
+
+	userService := ginCtx.Keys["userService"].(user.UserService)
+	userResp, err := userService.UserInfo(context.Background(), &userReq)
+	PanicIfUserError(err)
+	if userResp != nil {
+		ginCtx.JSON(http.StatusOK, user.UserResp{
+			User: userResp.User,
+		})
+	}
 }

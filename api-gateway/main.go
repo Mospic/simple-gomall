@@ -1,13 +1,7 @@
 package main
 
 import (
-	//"api-gateway/services/comment"
-	//"api-gateway/services/fav"
-	//"api-gateway/services/feed"
-	//message "api-gateway/services/message"
-	//"api-gateway/services/publish"
-	//"api-gateway/services/relation"
-	"api-gateway/services/user"
+	user "api-gateway/services/user"
 	"api-gateway/weblib"
 	"api-gateway/wrappers"
 	"github.com/micro/go-micro/v2"

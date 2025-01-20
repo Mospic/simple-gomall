@@ -7,6 +7,7 @@ option go_package="../;proto";
 service UserService {
   rpc Register(RegisterReq) returns (RegisterResp) {}
   rpc Login(LoginReq) returns (LoginResp) {}
+  rpc UserInfo(UserReq) returns(UserResp) {}
 }
 
 message RegisterReq {
@@ -17,6 +18,7 @@ message RegisterReq {
 
 message RegisterResp {
   int32 user_id = 1;
+  string Token = 2; //用户鉴权token
 }
 
 message LoginReq {
@@ -26,4 +28,19 @@ message LoginReq {
 
 message LoginResp {
   int32 user_id = 1;
+  string Token = 2; //用户鉴权token
+}
+
+message User {
+  int32 user_id = 1; //用户id
+  string email = 2; //用户email
+}
+
+message UserReq{
+  int32 user_id = 1; //用户id
+  string Token = 2; //用户鉴权token
+}
+
+message UserResp{
+  User User = 1; //用户信息
 }
