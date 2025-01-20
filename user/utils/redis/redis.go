@@ -10,8 +10,8 @@ var RdbUserId *redis.Client
 
 func InitRedis() {
 	RdbUserId = redis.NewClient(&redis.Options{
-		Addr:     "127.0.0.1:6379",
-		Password: "292023",
+		Addr:     "111.229.215.58:6379",
+		Password: "",
 		DB:       0, // 用户信息存入 DB0.
 	})
 }

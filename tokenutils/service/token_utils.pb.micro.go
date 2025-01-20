@@ -33,13 +33,13 @@ var _ context.Context
 var _ client.Option
 var _ server.Option
 
-// Api Endpoints for TokenService service
+// Api Endpoints for TokenService services
 
 func NewTokenServiceEndpoints() []*api.Endpoint {
 	return []*api.Endpoint{}
 }
 
-// Client API for TokenService service
+// Client API for TokenService services
 
 type TokenService interface {
 	GetIdByToken(ctx context.Context, in *GetIdByTokenRequest, opts ...client.CallOption) (*GetIdByTokenResponse, error)
@@ -67,7 +67,7 @@ func (c *tokenService) GetIdByToken(ctx context.Context, in *GetIdByTokenRequest
 	return out, nil
 }
 
-// Server API for TokenService service
+// Server API for TokenService services
 
 type TokenServiceHandler interface {
 	GetIdByToken(context.Context, *GetIdByTokenRequest, *GetIdByTokenResponse) error

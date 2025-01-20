@@ -1,6 +1,6 @@
 syntax = "proto3";
 package services;
-option go_package = "../;service";
+option go_package = "../;services";
 message GetIdByToken_request {
   string user_token = 1; // token
 
