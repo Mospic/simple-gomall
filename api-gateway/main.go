@@ -1,7 +1,6 @@
 package main
 
 import (
-	"api-gateway/pkg/utils/redis"
 	user "api-gateway/services/user"
 	"api-gateway/weblib"
 	"api-gateway/wrappers"
@@ -9,6 +8,7 @@ import (
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
 	"github.com/micro/go-micro/v2/web"
+	"tokenutils/utils/redis"
 
 	"time"
 )

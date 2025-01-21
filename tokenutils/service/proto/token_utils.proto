@@ -1,16 +1,24 @@
 syntax = "proto3";
 package services;
 option go_package = "../;services";
+
+import "google/protobuf/empty.proto";
+
 message GetIdByToken_request {
   string user_token = 1; // token
-
 }
 
 message GetIdByToken_response {
   int32 user_id = 1; // 用户id
-
 }
+
+message StoreTokenToID_request{
+  int32 user_id = 1;
+  string user_token = 2;
+}
+
 service TokenService{
   rpc GetIdByToken(GetIdByToken_request) returns (GetIdByToken_response);
+  rpc StoreTokenToID(StoreTokenToID_request) returns (google.protobuf.Empty);
 }
 
