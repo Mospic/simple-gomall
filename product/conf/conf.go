@@ -1,9 +1,9 @@
 package conf
 
 import (
-	"favorite/model"
 	"fmt"
 	"github.com/go-ini/ini"
+	"product/model"
 	"strings"
 )
 
