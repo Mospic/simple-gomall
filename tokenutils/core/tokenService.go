@@ -2,7 +2,9 @@ package core
 
 import (
 	"context"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	redisv8 "github.com/go-redis/redis/v8"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"time"
 	"tokenutils/service"
@@ -24,12 +26,19 @@ func (*TokenService) GetIdByToken(ctx context.Context, req *service.GetIdByToken
 	token = string(token)
 
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (i interface{}, e error) { return jwtSecret, nil })
-	// TODO store Redis
+	val, err := redis.RdbJwt.Get(ctx, "token").Result()
+	if err == redisv8.Nil {
+		fmt.Println("键不存在")
+		return nil // TODO 自定义 error
+	} else if err != nil {
+		fmt.Println("读取键值对失败: %v", err)
+		return nil
+	}
+
 	if tokenClaims != nil {
-		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
+		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid && int32(claims.Id) == val {
 			out.UserId = int32(claims.Id)
 			return nil
-
 		}
 	}
 	return err
