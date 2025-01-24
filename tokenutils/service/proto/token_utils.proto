@@ -3,14 +3,22 @@ package services;
 option go_package = "../;services";
 message GetIdByToken_request {
   string user_token = 1; // token
-
 }
 
 message GetIdByToken_response {
   int32 user_id = 1; // 用户id
-
 }
+
+message GenerateTokenByID_request {
+  int32 user_id = 1; // 用户id
+}
+
+message GenerateTokenByID_response {
+  string user_token = 1; // token
+}
+
 service TokenService{
   rpc GetIdByToken(GetIdByToken_request) returns (GetIdByToken_response);
+  rpc GenerateTokenByID(GenerateTokenByID_request) returns (GenerateTokenByID_response);
 }
 
