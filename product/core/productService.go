@@ -7,23 +7,23 @@ import (
 	services "product/services"
 )
 
-type productService struct {
+type ProductService struct {
 }
 
 /*
 * 获取商品信息
  */
-func (*productService) GetProduct(ctx context.Context, req *services.GetProductReq, resp *services.GetProductResp) error {
-	productId := req.Id
-	product, err := model.NewProductDao().FindProductByID(productId)
+func (*ProductService) GetProduct(ctx context.Context, req *services.GetProductReq, resp *services.GetProductResp) error {
+	Id := req.Id
+	product, err := model.NewProductDao().FindProductByID(Id)
 	if err != nil {
 		fmt.Println("获取商品信息失败")
 		return err
 	}
 	// 获取商品分类
-	categoryNameList, err := model.NewProductCategoryDao().FindCategoryNameByProductID(productId)
+	categoryNameList, err := model.NewProductCategoryDao().FindCategoryNameByProductID(Id)
 	resp.Product = &services.Product{
-		Id:          product.ProductId,
+		Id:          product.Id,
 		Name:        product.Name,
 		Description: product.Description,
 		Picture:     product.Picture,
@@ -36,7 +36,7 @@ func (*productService) GetProduct(ctx context.Context, req *services.GetProductR
 /*
 * 分页获取商品列表
  */
-func (*productService) ListProducts(ctx context.Context, req *services.ListProductsReq, resp *services.ListProductsResp) error {
+func (*ProductService) ListProducts(ctx context.Context, req *services.ListProductsReq, resp *services.ListProductsResp) error {
 	// 获取商品列表
 	productList, err := model.NewProductDao().ListProducts(req.Page, req.PageSize, req.CategoryName)
 	if err != nil {
@@ -45,13 +45,13 @@ func (*productService) ListProducts(ctx context.Context, req *services.ListProdu
 	}
 	// 获取商品分类
 	for _, product := range productList {
-		categoryNameList, err := model.NewProductCategoryDao().FindCategoryNameByProductID(product.ProductId)
+		categoryNameList, err := model.NewProductCategoryDao().FindCategoryNameByProductID(product.Id)
 		if err != nil {
 			fmt.Println("获取商品分类失败")
 			return err
 		}
 		resp.Products = append(resp.Products, &services.Product{
-			Id:          product.ProductId,
+			Id:          product.Id,
 			Name:        product.Name,
 			Description: product.Description,
 			Picture:     product.Picture,
@@ -65,7 +65,7 @@ func (*productService) ListProducts(ctx context.Context, req *services.ListProdu
 /*
 * 查询获取商品列表
  */
-func (*productService) SearchProducts(ctx context.Context, req *services.SearchProductsReq, resp *services.SearchProductsResp) error {
+func (*ProductService) SearchProducts(ctx context.Context, req *services.SearchProductsReq, resp *services.SearchProductsResp) error {
 	// 获取商品列表
 	productList, err := model.NewProductDao().SearchProducts(req.Query)
 	if err != nil {
@@ -74,13 +74,13 @@ func (*productService) SearchProducts(ctx context.Context, req *services.SearchP
 	}
 	// 获取商品分类
 	for _, product := range productList {
-		categoryNameList, err := model.NewProductCategoryDao().FindCategoryNameByProductID(product.ProductId)
+		categoryNameList, err := model.NewProductCategoryDao().FindCategoryNameByProductID(product.Id)
 		if err != nil {
 			fmt.Println("获取商品分类失败")
 			return err
 		}
 		resp.Results = append(resp.Results, &services.Product{
-			Id:          product.ProductId,
+			Id:          product.Id,
 			Name:        product.Name,
 			Description: product.Description,
 			Picture:     product.Picture,

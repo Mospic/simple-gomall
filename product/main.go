@@ -2,7 +2,6 @@ package main
 
 import (
 	"time"
-	//"user/utils/redis"
 
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
@@ -30,7 +29,7 @@ func main() {
 
 	microService.Init()
 
-	_ = services.RegisterProductServiceHandler(microService.Server(), new(core.ProductService))
+	_ = services.RegisterProductCatalogServiceHandler(microService.Server(), new(core.ProductService))
 
 	_ = microService.Run()
 }

@@ -6,7 +6,7 @@ import (
 )
 
 type Product struct {
-	ProductId   uint32    `gorm:"primary_key;auto_increment"`
+	Id          uint32    `gorm:"primary_key;auto_increment"`
 	Name        string    `gorm:"default:(-):not null"`
 	Description string    `gorm:"default:(-)"`
 	Picture     string    `gorm:"default:(-)"`
@@ -40,9 +40,9 @@ func NewProductDao() *ProductDao {
 根据商品ID查找商品实体
 */
 func (d *ProductDao) FindProductByID(id uint32) (*Product, error) {
-	product := Product{ProductId: id}
+	product := Product{Id: id}
 
-	result := DB.Where("product_id = ?", id).First(&product)
+	result := DB.Where("id = ?", id).First(&product)
 	err := result.Error
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (d *ProductDao) FindProductByID(id uint32) (*Product, error) {
  */
 func (d *ProductDao) FindProductByIDs(ids []uint32) ([]*Product, error) {
 	var productList []*Product
-	result := DB.Where("product_id in (?)", ids).Find(&productList)
+	result := DB.Where("id in (?)", ids).Find(&productList)
 	err := result.Error
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func (d *ProductDao) ListProducts(page int32, pageSize int64, categoryName strin
 	}
 	// 再根据商品ID分页获取商品实体
 	var productList []*Product
-	result := DB.Where("product_id in (?)", productIds).Offset(int64(page-1) * pageSize).Limit(pageSize).Find(&productList)
+	result := DB.Where("id in (?)", productIds).Offset(int64(page-1) * pageSize).Limit(pageSize).Find(&productList)
 	err = result.Error
 	if err != nil {
 		return nil, err
