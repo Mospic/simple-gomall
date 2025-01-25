@@ -6,12 +6,16 @@ import (
 )
 
 type User struct {
-	UserId   int32     `gorm:"primary_key;auto_increment"`
-	Email    string    `gorm:"type:varchar(255);unique;not null"`
-	Name     string    `gorm:"default:(-)"`
-	Password string    `gorm:"default:(-)"`
-	CreateAt time.Time `gorm:"not null"`
-	DeleteAt time.Time `gorm:"default:NULL"`
+	Id              int32     `gorm:"primary_key;auto_increment"`
+	Name            string    `gorm:"default:(-)"`
+	Email           string    `gorm:"type:varchar(255);unique;not null"`
+	Password        string    `gorm:"default:(-)"`
+	Avatar          string    `gorm:"type:varchar(255);"`
+	BackgroundImage string    `gorm:"type:varchar(255);"`
+	Signature       string    `gorm:"type:varchar(255);"`
+	CreateAt        time.Time `gorm:"not null"`
+	UpdateAt        time.Time `gorm:"not null"`
+	DeleteAt        time.Time `gorm:"default:NULL"`
 }
 
 func (User) TableName() string {
@@ -45,7 +49,7 @@ func (*UserDao) CreateUser(user *User) (int32, error) {
 		return -1, result.Error
 	}
 
-	return user.UserId, nil
+	return user.Id, nil
 }
 
 /*
@@ -53,9 +57,9 @@ func (*UserDao) CreateUser(user *User) (int32, error) {
 */
 
 func (d *UserDao) FindUserByID(id int32) (*User, error) {
-	user := User{UserId: id}
+	user := User{Id: id}
 
-	result := DB.Where("user_id = ?", id).First(&user)
+	result := DB.Where("id = ?", id).First(&user)
 	err := result.Error
 	if err != nil {
 		return nil, err
@@ -76,7 +80,6 @@ func (*UserDao) FindUserByName(username string) (*User, error) {
 
 func (*UserDao) FindUserByEmail(email string) (*User, error) {
 	user := User{Email: email}
-
 	result := DB.Where("email = ?", email).First(&user)
 	err := result.Error
 	if err != nil {

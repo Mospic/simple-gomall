@@ -41,7 +41,7 @@ func (*UserService) Login(ctx context.Context, req *services.LoginReq, resp *ser
 		return nil
 	}
 
-	resp.UserId = user.UserId
+	resp.UserId = user.Id
 	return nil
 }
 
@@ -72,16 +72,17 @@ func (*UserService) Register(ctx context.Context, req *services.RegisterReq, res
 	//
 	////调用数据库方法，查询是否有同名实体
 	if user, err := model.NewUserDao().FindUserByEmail(email); err == nil {
-		resp.UserId = user.UserId
+		resp.UserId = user.Id
 		return nil
 	}
 	//
 	////创建一个dao层User实体
 	user := &model.User{
+		Name:     email,
 		Email:    email,
 		Password: sha256.Sha256(password),
-		Name:     email,
 		CreateAt: time.Now(),
+		UpdateAt: time.Now(),
 	}
 	//
 	////调用数据库方法，创建一个新的User实体
@@ -100,7 +101,7 @@ func (*UserService) Register(ctx context.Context, req *services.RegisterReq, res
 	////补充resp
 	//resp.StatusCode = 0
 	//resp.StatusMsg = "注册成功"
-	resp.UserId = user.UserId
+	resp.UserId = user.Id
 	fmt.Println("Success register user:", user)
 	resp.Token = ""
 	return nil

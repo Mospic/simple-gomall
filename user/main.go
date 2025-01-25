@@ -1,15 +1,14 @@
 package main
 
 import (
-	"time"
-	"user/utils/redis"
-
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
+	"time"
 	"user/conf"
 	"user/core"
 	services "user/services"
+	"user/utils/redis"
 )
 
 func main() {
