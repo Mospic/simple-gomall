@@ -31,7 +31,7 @@ func Register(ginCtx *gin.Context) {
 		tokenReq.UserId = userResp.UserId
 		GenerateTokenByIDResponse, err := tokenService.GenerateTokenByID(context.Background(), &tokenReq)
 		if GenerateTokenByIDResponse != nil {
-			jwtToken := GenerateTokenByIDResponse.UserToken
+			jwtToken := GenerateTokenByIDResponse.Token
 			PanicIfUserError(err)
 			//返回
 			ginCtx.JSON(http.StatusOK, user.RegisterResp{
@@ -69,7 +69,7 @@ func Login(ginCtx *gin.Context) {
 		GenerateTokenByIDResponse, err := tokenService.GenerateTokenByID(context.Background(), &tokenReq)
 		PanicIfUserError(err)
 		if GenerateTokenByIDResponse != nil {
-			jwtToken := GenerateTokenByIDResponse.UserToken
+			jwtToken := GenerateTokenByIDResponse.Token
 			PanicIfUserError(err)
 			//返回
 			ginCtx.JSON(http.StatusOK, user.LoginResp{
@@ -98,19 +98,30 @@ func DeleteUser(ginCtx *gin.Context) {
 // // 获取用户的详细信息
 func UserInfo(ginCtx *gin.Context) {
 	var userReq user.UserReq
+	var tokenReq token.GetIdByTokenRequest
 	//将获取到的user_id转换成int类型
-	if err := ginCtx.ShouldBindJSON(&userReq); err != nil {
+	if err := ginCtx.ShouldBindJSON(&tokenReq); err != nil {
 		fmt.Println(err)
 		ginCtx.JSON(400, gin.H{"error": "Invalid JSON"})
 		return
 	}
 
-	userService := ginCtx.Keys["userService"].(user.UserService)
-	userResp, err := userService.UserInfo(context.Background(), &userReq)
+	tokenService := ginCtx.Keys["tokenService"].(token.TokenService)
+	GetIdByTokenResponse, err := tokenService.GetIdByToken(context.Background(), &tokenReq)
 	PanicIfUserError(err)
-	if userResp != nil {
-		ginCtx.JSON(http.StatusOK, user.UserResp{
-			User: userResp.User,
-		})
+	if GetIdByTokenResponse != nil && GetIdByTokenResponse.UserId > 0 {
+		userService := ginCtx.Keys["userService"].(user.UserService)
+		userReq.UserId = GetIdByTokenResponse.UserId
+		userResp, err := userService.UserInfo(context.Background(), &userReq)
+		PanicIfUserError(err)
+		if userResp != nil {
+			ginCtx.JSON(http.StatusOK, user.UserResp{
+				User: userResp.User,
+			})
+		} else {
+			ginCtx.JSON(400, gin.H{"error": "Invalid User"})
+		}
+	} else {
+		ginCtx.JSON(400, gin.H{"error": "Invalid Token"})
 	}
 }

@@ -19,7 +19,7 @@ type TokenService struct {
 }
 
 func (*TokenService) GetIdByToken(ctx context.Context, req *services.GetIdByTokenRequest, out *services.GetIdByTokenResponse) error {
-	token := req.UserToken
+	token := req.Token
 	token = string(token)
 
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (i interface{}, e error) { return jwtSecret, nil })
@@ -46,6 +46,6 @@ func (*TokenService) GenerateTokenByID(ctx context.Context, req *services.Genera
 	}
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	token, err := tokenClaims.SignedString(jwtSecret)
-	out.UserToken = token
+	out.Token = token
 	return err
 }
