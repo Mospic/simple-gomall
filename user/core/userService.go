@@ -108,73 +108,28 @@ func (*UserService) Register(ctx context.Context, req *services.RegisterReq, res
 }
 
 /**
-登录用户的详细信息 service层
-在登录后或注册后被调用，查看自己的信息。
-在刷视频的时候，点进作者头像调用，查看别人的信息。
-resp: token判断用户是否登录， userId，想要查询的用户的Id
+用户信息查询：
+req: userID
+resp: User类
 */
 //TODO，查出来的数据可以放在缓存里, 这部分还没做，等购物车等功能出来再做
 func (*UserService) UserInfo(ctx context.Context, req *services.UserReq, resp *services.UserResp) error {
-	fmt.Println("进入userInfo方法了")
+	user, err := model.NewUserDao().FindUserByID(req.UserId)
+	if err != nil {
+		resp.User = nil
+		return err
+	}
+	resp.User = BuildProtoUser(user)
 	return nil
-	//解析token,从token解析出userId，能解析出的才能查询用户信息，否则要先登录
-	//tokenUserIdConv, err := rpc_server.GetIdByToken(req.Token)
-	//if err != nil {
-	//	resp.StatusCode = -1
-	//	resp.StatusMsg = "登录失效，请重新登录"
-	//	resp.User = &services.User{}
-	//	return nil
-	//}
-	// 获得想要获取详细信息的userId
-	//email := req.Email
-	//
-	//var user *model.User
-	//var userString string
-	//
-	//count, err := redis.RdbUserId.Exists(redis.Ctx, strconv.FormatInt(userId, 10)).Result()
-	//if err != nil {
-	//	log.Println(err)
-	//}
-	//
-	//if count > 0 {
-	//	//缓存里有
-	//	//redis，先从redis通过userId查询user实体
-	//	userString, err = redis.RdbUserId.Get(redis.Ctx, strconv.FormatInt(userId, 10)).Result()
-	//	if err != nil { //若查询缓存出错，则打印log
-	//		//return 0, err
-	//		log.Println("调用redis查询userId对应的信息出错", err)
-	//	}
-	//	json.Unmarshal([]byte(userString), &user)
-	//	fmt.Println("redis查出来的结果")
-	//	fmt.Println(&user)
-	//} else {
-	//	fmt.Println("查数据库")
-	//	//根据userId查询User
-	//	user, err = model.NewUserDaoInstance().FindUserById(userId)
-	//	fmt.Println("输出一下改了protobuf之后的user")
-	//	fmt.Println(user)
-	//	if err != nil {
-	//		resp.StatusCode = 1
-	//		resp.StatusMsg = "查找用户信息时发生异常"
-	//		return err
-	//	}
-	//	//把查到的数据放入redis
-	//	userValue, _ := json.Marshal(&user)
-	//	_ = redis.RdbUserId.Set(redis.Ctx, strconv.FormatInt(userId, 10), userValue, 0).Err()
-	//}
-	//
-	//fmt.Println(user)
-	//
-	////TODO 这里应该调用Relation的微服务，是否有关注关系？为了不影响后续使用，目前先做了数据库查询，需要替换
-	//isFollow, err := model.NewUserDaoInstance().FindRelationById(userId, tokenUserIdConv)
-	//if err != nil {
-	//	resp.StatusCode = -1
-	//	resp.StatusMsg = "查询relation数据库，两人是否有关注关系的时候失败"
-	//	return err
-	//}
-	//
-	//resp.StatusCode = 0
-	//resp.StatusMsg = "查询用户信息成功"
-	//resp.User = BuildProtoUser(user, isFollow)
-	//return nil
+}
+
+/*
+构建Service层user
+*/
+func BuildProtoUser(item *model.User) *services.User {
+	user := services.User{
+		UserId: item.UserId,
+		Email:  item.Email,
+	}
+	return &user
 }
