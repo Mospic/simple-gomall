@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"api-gateway/pkg/utils"
 	token "api-gateway/services/tokenutils"
 	user "api-gateway/services/user"
 	"context"
@@ -50,6 +49,7 @@ func Register(ginCtx *gin.Context) {
 // 用户登录
 func Login(ginCtx *gin.Context) {
 	var userReq user.LoginReq
+	var tokenReq token.GenerateTokenByIDRequest
 	if err := ginCtx.ShouldBindJSON(&userReq); err != nil {
 		fmt.Println(err)
 		ginCtx.JSON(400, gin.H{"error": "Invalid JSON"})
@@ -62,15 +62,21 @@ func Login(ginCtx *gin.Context) {
 	PanicIfUserError(err)
 
 	//生成token
-	var token string
-	if userResp != nil && userResp.UserId > 0 {
-		token, err = utils.GenerateToken(userResp.UserId)
-		PanicIfUserError(err)
 
-		ginCtx.JSON(http.StatusOK, user.LoginResp{
-			UserId: userResp.UserId,
-			Token:  token,
-		})
+	if userResp != nil && userResp.UserId > 0 {
+		tokenService := ginCtx.Keys["tokenService"].(token.TokenService)
+		tokenReq.UserId = userResp.UserId
+		GenerateTokenByIDResponse, err := tokenService.GenerateTokenByID(context.Background(), &tokenReq)
+		PanicIfUserError(err)
+		if GenerateTokenByIDResponse != nil {
+			jwtToken := GenerateTokenByIDResponse.UserToken
+			PanicIfUserError(err)
+			//返回
+			ginCtx.JSON(http.StatusOK, user.LoginResp{
+				UserId: userResp.UserId,
+				Token:  jwtToken,
+			})
+		}
 	} else {
 		ginCtx.JSON(400, gin.H{"error": "Invalid User"}) // TODO 拓展
 	}
