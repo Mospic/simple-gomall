@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/dgrijalva/jwt-go"
 	"time"
-	"tokenutils/service"
+	"tokenutils/services"
 )
 
 var jwtSecret = []byte("1122233")
@@ -18,7 +18,7 @@ type Claims struct {
 type TokenService struct {
 }
 
-func (*TokenService) GetIdByToken(ctx context.Context, req *service.GetIdByTokenRequest, out *service.GetIdByTokenResponse) error {
+func (*TokenService) GetIdByToken(ctx context.Context, req *services.GetIdByTokenRequest, out *services.GetIdByTokenResponse) error {
 	token := req.UserToken
 	token = string(token)
 
@@ -33,7 +33,7 @@ func (*TokenService) GetIdByToken(ctx context.Context, req *service.GetIdByToken
 
 }
 
-func (*TokenService) GenerateTokenByID(ctx context.Context, req *service.GenerateTokenByIDRequest, out *service.GenerateTokenByIDResponse) error {
+func (*TokenService) GenerateTokenByID(ctx context.Context, req *services.GenerateTokenByIDRequest, out *services.GenerateTokenByIDResponse) error {
 	id := req.UserId
 	nowTime := time.Now()
 	expireTime := nowTime.Add(TokenExpirationTime)

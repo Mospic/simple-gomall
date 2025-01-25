@@ -94,6 +94,8 @@ func (*UserService) Register(ctx context.Context, req *services.RegisterReq, res
 	//
 	////根据用户名，查询新用户的userId，作为返回值返回
 	user, _ = model.NewUserDao().FindUserByEmail(email)
+	//tokenService := services.NewTokenService("rpcTokenService", services.Client())
+	//generateRes, err := tokenService.GenerateTokenByID(ctx, generateReq)
 	//
 	////补充resp
 	//resp.StatusCode = 0

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"api-gateway/pkg/utils"
+	token "api-gateway/services/tokenutils"
 	user "api-gateway/services/user"
 	"context"
 	"fmt"
@@ -12,6 +13,7 @@ import (
 // 用户注册
 func Register(ginCtx *gin.Context) {
 	var userReq user.RegisterReq
+	var tokenReq token.GenerateTokenByIDRequest
 	//获取用户名和密码
 	if err := ginCtx.ShouldBindJSON(&userReq); err != nil {
 		fmt.Println(err)
@@ -25,15 +27,20 @@ func Register(ginCtx *gin.Context) {
 	//调用user微服务，将context的上下文传入
 	userResp, err := userService.Register(context.Background(), &userReq)
 	PanicIfUserError(err)
-	var token string
 	if userResp != nil && userResp.UserId > 0 { //做一下保护，返回的UserId应该大于0
-		token, err = utils.GenerateToken(userResp.UserId)
-		PanicIfUserError(err)
-		//返回
-		ginCtx.JSON(http.StatusOK, user.RegisterResp{
-			UserId: userResp.UserId,
-			Token:  token,
-		})
+		tokenService := ginCtx.Keys["tokenService"].(token.TokenService)
+		tokenReq.UserId = userResp.UserId
+		GenerateTokenByIDResponse, err := tokenService.GenerateTokenByID(context.Background(), &tokenReq)
+		if GenerateTokenByIDResponse != nil {
+			jwtToken := GenerateTokenByIDResponse.UserToken
+			PanicIfUserError(err)
+			//返回
+			ginCtx.JSON(http.StatusOK, user.RegisterResp{
+				UserId: userResp.UserId,
+				Token:  jwtToken,
+			})
+		}
+
 	} else {
 		ginCtx.JSON(400, gin.H{"error": "Invalid User"})
 	}

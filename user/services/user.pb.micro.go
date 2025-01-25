@@ -33,13 +33,13 @@ var _ context.Context
 var _ client.Option
 var _ server.Option
 
-// Api Endpoints for UserService service
+// Api Endpoints for UserService services
 
 func NewUserServiceEndpoints() []*api.Endpoint {
 	return []*api.Endpoint{}
 }
 
-// Client API for UserService service
+// Client API for UserService services
 
 type UserService interface {
 	Register(ctx context.Context, in *RegisterReq, opts ...client.CallOption) (*RegisterResp, error)
@@ -89,7 +89,7 @@ func (c *userService) UserInfo(ctx context.Context, in *UserReq, opts ...client.
 	return out, nil
 }
 
-// Server API for UserService service
+// Server API for UserService services
 
 type UserServiceHandler interface {
 	Register(context.Context, *RegisterReq, *RegisterResp) error

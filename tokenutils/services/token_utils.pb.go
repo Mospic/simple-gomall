@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.36.1-devel
 // 	protoc        v5.29.2
-// source: service/proto/token_utils.proto
+// source: services/proto/token_utils.proto
 
-package service
+package services
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
