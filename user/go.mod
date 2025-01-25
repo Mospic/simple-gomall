@@ -11,8 +11,6 @@ require (
 	github.com/micro/go-micro/v2 v2.9.1
 	google.golang.org/protobuf v1.34.1
 	gopkg.in/ini.v1 v1.67.0
-	gorm.io/driver/mysql v1.5.7
-	gorm.io/gorm v1.25.12
 )
 
 require (

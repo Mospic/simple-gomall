@@ -85,24 +85,16 @@ func (*UserService) Register(ctx context.Context, req *services.RegisterReq, res
 		UpdateAt: time.Now(),
 	}
 	//
-	////调用数据库方法，创建一个新的User实体
-	_, err := model.NewUserDao().CreateUser(user)
+	////调用数据库方法，创建一个新的User实体，返回用户id和err
+	userId, err := model.NewUserDao().CreateUser(user)
 	if err != nil {
 		resp.UserId = -1
 		resp.Token = ""
 		return err
 	}
-	//
-	////根据用户名，查询新用户的userId，作为返回值返回
-	user, _ = model.NewUserDao().FindUserByEmail(email)
-	//tokenService := services.NewTokenService("rpcTokenService", services.Client())
-	//generateRes, err := tokenService.GenerateTokenByID(ctx, generateReq)
-	//
-	////补充resp
-	//resp.StatusCode = 0
-	//resp.StatusMsg = "注册成功"
-	resp.UserId = user.Id
+	resp.UserId = userId
 	fmt.Println("Success register user:", user)
+	// 写入token
 	resp.Token = ""
 	return nil
 }
@@ -123,12 +115,34 @@ func (*UserService) UserInfo(ctx context.Context, req *services.UserReq, resp *s
 	return nil
 }
 
+func (*UserService) Update(ctx context.Context, req *services.UpdateReq, resp *services.UpdateResp) error {
+	user, err := model.NewUserDao().FindUserByEmail(req.Email)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	user.UpdateAt = time.Now()
+	user.Name = req.Name
+	user.Avatar = req.Avatar
+	user.BackgroundImage = req.BackgroundImage
+	user.Signature = req.Signature
+	user.Password = req.Password
+	info, err1 := model.NewUserDao().UpdateUserInfo(user)
+	if err1 != nil {
+		resp.Token = "失败"
+		return err1
+	}
+	resp.Token = "成功！"
+	fmt.Println(info)
+	return nil
+}
+
 /*
 构建Service层user
 */
 func BuildProtoUser(item *model.User) *services.User {
 	user := services.User{
-		UserId: item.UserId,
+		UserId: item.Id,
 		Email:  item.Email,
 	}
 	return &user

@@ -15,7 +15,7 @@ type User struct {
 	Signature       string    `gorm:"type:varchar(255);"`
 	CreateAt        time.Time `gorm:"not null"`
 	UpdateAt        time.Time `gorm:"not null"`
-	DeleteAt        time.Time `gorm:"default:NULL"`
+	DeleteAt        int32     `gorm:"default:0"`
 }
 
 func (User) TableName() string {
@@ -86,4 +86,9 @@ func (*UserDao) FindUserByEmail(email string) (*User, error) {
 		return nil, err
 	}
 	return &user, err
+}
+
+func (*UserDao) UpdateUserInfo(user *User) (*User, error) {
+	result := DB.Save(&user)
+	return user, result.Error
 }

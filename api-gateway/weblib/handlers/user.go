@@ -27,6 +27,7 @@ func Register(ginCtx *gin.Context) {
 	userResp, err := userService.Register(context.Background(), &userReq)
 	PanicIfUserError(err)
 	if userResp != nil && userResp.UserId > 0 { //做一下保护，返回的UserId应该大于0
+		fmt.Println("88888888888888888888")
 		tokenService := ginCtx.Keys["tokenService"].(token.TokenService)
 		tokenReq.UserId = userResp.UserId
 		GenerateTokenByIDResponse, err := tokenService.GenerateTokenByID(context.Background(), &tokenReq)
@@ -87,8 +88,23 @@ func Logout(ginCtx *gin.Context) {
 
 }
 
-func UpdateUser(ginCtx *gin.Context) {
-
+// 更新用户信息
+func Update(ginCtx *gin.Context) {
+	var userReq user.UpdateReq
+	//将获取到的user_id转换成int类型
+	if err := ginCtx.ShouldBindJSON(&userReq); err != nil {
+		fmt.Println(err)
+		ginCtx.JSON(400, gin.H{"error": "Invalid JSON"})
+		return
+	}
+	userService := ginCtx.Keys["userService"].(user.UserService)
+	userResp, err1 := userService.Update(context.Background(), &userReq)
+	PanicIfUserError(err1)
+	//返回
+	ginCtx.JSON(http.StatusOK, user.UpdateResp{
+		UserId: userResp.UserId,
+		Token:  userResp.Token,
+	})
 }
 
 func DeleteUser(ginCtx *gin.Context) {

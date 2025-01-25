@@ -2,12 +2,13 @@ syntax="proto3";
 
 package user;
 
-option go_package="../;protos";
+option go_package="../;services";
 
 service UserService {
   rpc Register(RegisterReq) returns (RegisterResp) {}
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc UserInfo(UserReq) returns(UserResp) {}
+  rpc Update(UpdateReq) returns(UpdateResp) {}
 }
 
 message RegisterReq {
@@ -27,6 +28,21 @@ message LoginReq {
 }
 
 message LoginResp {
+  int32 user_id = 1;
+  string Token = 2; //用户鉴权token
+}
+
+
+message UpdateReq {
+  string name = 1;
+  string email= 2;
+  string password = 3;
+  string avatar = 4;
+  string backgroundImage = 5;
+  string signature = 6;
+}
+
+message UpdateResp {
   int32 user_id = 1;
   string Token = 2; //用户鉴权token
 }
