@@ -33,13 +33,13 @@ var _ context.Context
 var _ client.Option
 var _ server.Option
 
-// Api Endpoints for ProductCatalogService service
+// Api Endpoints for ProductCatalogService services
 
 func NewProductCatalogServiceEndpoints() []*api.Endpoint {
 	return []*api.Endpoint{}
 }
 
-// Client API for ProductCatalogService service
+// Client API for ProductCatalogService services
 
 type ProductCatalogService interface {
 	ListProducts(ctx context.Context, in *ListProductsReq, opts ...client.CallOption) (*ListProductsResp, error)
@@ -89,7 +89,7 @@ func (c *productCatalogService) SearchProducts(ctx context.Context, in *SearchPr
 	return out, nil
 }
 
-// Server API for ProductCatalogService service
+// Server API for ProductCatalogService services
 
 type ProductCatalogServiceHandler interface {
 	ListProducts(context.Context, *ListProductsReq, *ListProductsResp) error

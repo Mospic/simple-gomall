@@ -38,7 +38,6 @@ message User {
 
 message UserReq{
   int32 user_id = 1; //用户id
-  string Token = 2; //用户鉴权token
 }
 
 message UserResp{
