@@ -63,7 +63,6 @@ func Login(ginCtx *gin.Context) {
 	PanicIfUserError(err)
 
 	//生成token
-
 	if userResp != nil && userResp.UserId > 0 {
 		tokenService := ginCtx.Keys["tokenService"].(token.TokenService)
 		tokenReq.UserId = userResp.UserId

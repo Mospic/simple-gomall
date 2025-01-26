@@ -41,6 +41,12 @@ func (*UserService) Login(ctx context.Context, req *services.LoginReq, resp *ser
 		return nil
 	}
 
+	// 判断该用户是否已经被删除
+	if user.DeleteAt == 1 {
+		resp.Token = "该用户已经被删除，登录失败!"
+		return nil
+	}
+
 	resp.UserId = user.Id
 	return nil
 }
@@ -120,6 +126,11 @@ func (*UserService) Update(ctx context.Context, req *services.UpdateReq, resp *s
 	if err != nil {
 		fmt.Println(err)
 		return err
+	}
+	// 判断该用户是否已经被删除
+	if user.DeleteAt == 1 {
+		resp.Token = "该用户已经被删除，登录失败"
+		return nil
 	}
 	user.UpdateAt = time.Now()
 	user.Name = req.Name

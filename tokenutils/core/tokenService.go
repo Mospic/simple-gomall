@@ -2,7 +2,9 @@ package core
 
 import (
 	"context"
+	"errors"
 	"github.com/dgrijalva/jwt-go"
+	"strings"
 	"time"
 	"tokenutils/services"
 )
@@ -30,7 +32,6 @@ func (*TokenService) GetIdByToken(ctx context.Context, req *services.GetIdByToke
 		}
 	}
 	return err
-
 }
 
 func (*TokenService) GenerateTokenByID(ctx context.Context, req *services.GenerateTokenByIDRequest, out *services.GenerateTokenByIDResponse) error {
@@ -47,5 +48,28 @@ func (*TokenService) GenerateTokenByID(ctx context.Context, req *services.Genera
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	token, err := tokenClaims.SignedString(jwtSecret)
 	out.Token = token
+	return err
+}
+
+func (*TokenService) VarifyToken(ctx context.Context, req *services.VerifyTokenRequest, out *services.VerifyTokenResponse) error {
+	token := req.Token
+	// 1 .验证长度
+	parts := strings.Split(token, ".")
+	if len(parts) != 3 {
+		return errors.New("token format error")
+	}
+	// 2. 验证
+	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (i interface{}, e error) { return jwtSecret, nil })
+	if tokenClaims != nil {
+		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
+			// 判断当前用户是否匹配
+			if claims.Id != req.UserId {
+				return errors.New("错误！token对应的id不一致！")
+			}
+			out.Status = "验证成功！"
+			out.Token = token
+			return nil
+		}
+	}
 	return err
 }

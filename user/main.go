@@ -18,7 +18,6 @@ func main() {
 	etcdReg := etcd.NewRegistry(
 		registry.Addrs("127.0.0.1:2379"),
 	)
-
 	microService := micro.NewService(
 		micro.Name("rpcUserService"), // 微服务名字
 		micro.Address("127.0.0.1:8082"),

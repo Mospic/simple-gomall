@@ -17,8 +17,19 @@ message GenerateTokenByID_response {
   string token = 1; // token
 }
 
+message VerifyToken_request{
+  int32  user_id = 1;
+  string token = 2;
+}
+
+message VerifyToken_response{
+  string token = 1;
+  string status = 2;
+}
+
 service TokenService{
   rpc GetIdByToken(GetIdByToken_request) returns (GetIdByToken_response);
   rpc GenerateTokenByID(GenerateTokenByID_request) returns (GenerateTokenByID_response);
+  rpc VarifyToken(VerifyToken_request) returns (VerifyToken_response);
 }
 
