@@ -46,6 +46,7 @@ type UserService interface {
 	Login(ctx context.Context, in *LoginReq, opts ...client.CallOption) (*LoginResp, error)
 	UserInfo(ctx context.Context, in *UserReq, opts ...client.CallOption) (*UserResp, error)
 	Update(ctx context.Context, in *UpdateReq, opts ...client.CallOption) (*UpdateResp, error)
+	Delete(ctx context.Context, in *DeleteReq, opts ...client.CallOption) (*DeleteResp, error)
 }
 
 type userService struct {
@@ -100,6 +101,16 @@ func (c *userService) Update(ctx context.Context, in *UpdateReq, opts ...client.
 	return out, nil
 }
 
+func (c *userService) Delete(ctx context.Context, in *DeleteReq, opts ...client.CallOption) (*DeleteResp, error) {
+	req := c.c.NewRequest(c.name, "UserService.Delete", in)
+	out := new(DeleteResp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for UserService service
 
 type UserServiceHandler interface {
@@ -107,6 +118,7 @@ type UserServiceHandler interface {
 	Login(context.Context, *LoginReq, *LoginResp) error
 	UserInfo(context.Context, *UserReq, *UserResp) error
 	Update(context.Context, *UpdateReq, *UpdateResp) error
+	Delete(context.Context, *DeleteReq, *DeleteResp) error
 }
 
 func RegisterUserServiceHandler(s server.Server, hdlr UserServiceHandler, opts ...server.HandlerOption) error {
@@ -115,6 +127,7 @@ func RegisterUserServiceHandler(s server.Server, hdlr UserServiceHandler, opts .
 		Login(ctx context.Context, in *LoginReq, out *LoginResp) error
 		UserInfo(ctx context.Context, in *UserReq, out *UserResp) error
 		Update(ctx context.Context, in *UpdateReq, out *UpdateResp) error
+		Delete(ctx context.Context, in *DeleteReq, out *DeleteResp) error
 	}
 	type UserService struct {
 		userService
@@ -141,4 +154,8 @@ func (h *userServiceHandler) UserInfo(ctx context.Context, in *UserReq, out *Use
 
 func (h *userServiceHandler) Update(ctx context.Context, in *UpdateReq, out *UpdateResp) error {
 	return h.UserServiceHandler.Update(ctx, in, out)
+}
+
+func (h *userServiceHandler) Delete(ctx context.Context, in *DeleteReq, out *DeleteResp) error {
+	return h.UserServiceHandler.Delete(ctx, in, out)
 }

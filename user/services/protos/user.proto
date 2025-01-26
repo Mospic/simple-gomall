@@ -9,6 +9,7 @@ service UserService {
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc UserInfo(UserReq) returns(UserResp) {}
   rpc Update(UpdateReq) returns(UpdateResp) {}
+  rpc Delete(DeleteReq) returns(DeleteResp) {}
 }
 
 message RegisterReq {
@@ -43,6 +44,15 @@ message UpdateReq {
 }
 
 message UpdateResp {
+  int32 user_id = 1;
+  string Token = 2; //用户鉴权token
+}
+
+message DeleteReq {
+  string email= 1;
+}
+
+message DeleteResp {
   int32 user_id = 1;
   string Token = 2; //用户鉴权token
 }

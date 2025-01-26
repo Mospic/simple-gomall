@@ -19,6 +19,7 @@ func NewRouter(service map[string]interface{}) *gin.Engine {
 			user.POST("/register/", handlers.Register)
 			user.POST("/login/", handlers.Login)
 			user.POST("/update", handlers.Update)
+			user.POST("/delete", handlers.DeleteUser)
 		}
 	}
 	return ginRouter

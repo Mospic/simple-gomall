@@ -126,7 +126,7 @@ func (*UserService) Update(ctx context.Context, req *services.UpdateReq, resp *s
 	user.Avatar = req.Avatar
 	user.BackgroundImage = req.BackgroundImage
 	user.Signature = req.Signature
-	user.Password = req.Password
+	user.Password = sha256.Sha256(req.Password)
 	info, err1 := model.NewUserDao().UpdateUserInfo(user)
 	if err1 != nil {
 		resp.Token = "失败"
@@ -134,6 +134,31 @@ func (*UserService) Update(ctx context.Context, req *services.UpdateReq, resp *s
 	}
 	resp.Token = "成功！"
 	fmt.Println(info)
+	return nil
+}
+
+func (*UserService) Delete(ctx context.Context, req *services.DeleteReq, resp *services.DeleteResp) error {
+	// 要删除这个人 先看看 这个人是不是已经被删除了
+	user, err := model.NewUserDao().FindUserByEmail(req.Email)
+	if user != nil {
+		resp.UserId = user.Id
+		if user.DeleteAt == 1 {
+			resp.Token = "当前用户已被删除，不可重复删除！"
+			return nil
+		}
+	}
+	if err != nil {
+		resp.Token = "查询该用户失败！"
+		return err
+	}
+	user.DeleteAt = 1
+	user.UpdateAt = time.Now()
+	info, err := model.NewUserDao().UpdateUserInfo(user)
+	resp.Token = "当前用户已成功删除！"
+	fmt.Println(info)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

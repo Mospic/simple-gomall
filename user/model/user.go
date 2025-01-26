@@ -92,3 +92,8 @@ func (*UserDao) UpdateUserInfo(user *User) (*User, error) {
 	result := DB.Save(&user)
 	return user, result.Error
 }
+
+func (*UserDao) DeleteUserByEmail(user *User) (*User, error) {
+	result := DB.Save(&user)
+	return user, result.Error
+}

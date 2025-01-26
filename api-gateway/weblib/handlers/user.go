@@ -107,8 +107,19 @@ func Update(ginCtx *gin.Context) {
 	})
 }
 
+// 删除用户
 func DeleteUser(ginCtx *gin.Context) {
-
+	var userReq user.DeleteReq
+	//将获取到的user_id转换成int类型
+	if err := ginCtx.ShouldBindJSON(&userReq); err != nil {
+		fmt.Println(err)
+		ginCtx.JSON(400, gin.H{"error": "Invalid JSON"})
+		return
+	}
+	userService := ginCtx.Keys["userService"].(user.UserService)
+	userResp, err1 := userService.Delete(context.Background(), &userReq)
+	PanicIfUserError(err1)
+	ginCtx.JSON(http.StatusOK, gin.H{"Status": userResp})
 }
 
 // // 获取用户的详细信息
