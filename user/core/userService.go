@@ -31,6 +31,8 @@ func (*UserService) Login(ctx context.Context, req *services.LoginReq, resp *ser
 
 	user, err := model.NewUserDao().FindUserByEmail(email)
 	if err != nil {
+		resp.UserId = -1
+		resp.Token = ""
 		return err
 	}
 
