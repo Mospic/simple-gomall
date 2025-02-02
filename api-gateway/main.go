@@ -3,6 +3,7 @@ package main
 import (
 	"api-gateway/pkg/utils/redis"
 	product "api-gateway/services/product"
+	tokenutils "api-gateway/services/tokenutils"
 	user "api-gateway/services/user"
 	"api-gateway/weblib"
 	"api-gateway/wrappers"
@@ -26,6 +27,12 @@ func main() {
 	)
 	// 用户服务调用实例
 	userService := user.NewUserService("rpcUserService", userMicroService.Client())
+	// token服务
+	tokenMicroService := micro.NewService(
+		micro.Name("tokenService.client"),
+	)
+	// publish服务调用实例
+	tokenService := tokenutils.NewTokenService("rpcTokenService", tokenMicroService.Client())
 
 	// product
 	productMicroService := micro.NewService(
@@ -37,6 +44,7 @@ func main() {
 
 	serviceMap := make(map[string]interface{})
 	serviceMap["userService"] = userService
+	serviceMap["tokenService"] = tokenService
 	serviceMap["productService"] = productService
 
 	//创建微服务实例，使用gin暴露http接口并注册到etcd
