@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"strings"
 	"time"
@@ -27,7 +28,7 @@ func (*TokenService) GetIdByToken(ctx context.Context, req *services.GetIdByToke
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (i interface{}, e error) { return jwtSecret, nil })
 	if tokenClaims != nil {
 		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
-			out.UserId = int32(claims.Id)
+			out.UserId = claims.Id
 			return nil
 		}
 	}
@@ -64,10 +65,11 @@ func (*TokenService) VarifyToken(ctx context.Context, req *services.VerifyTokenR
 		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
 			// 判断当前用户是否匹配
 			if claims.Id != req.UserId {
-				return errors.New("错误！token对应的id不一致！")
+				fmt.Println(claims.Id)
+				return errors.New("错误！token对应的id不一致!")
 			}
-			out.Status = "验证成功！"
 			out.Token = token
+			out.Status = "验证成功！"
 			return nil
 		}
 	}

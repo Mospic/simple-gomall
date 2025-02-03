@@ -83,6 +83,7 @@ func Login(ginCtx *gin.Context) {
 
 }
 
+// 用户登出
 func Logout(ginCtx *gin.Context) {
 
 }
@@ -96,13 +97,22 @@ func Update(ginCtx *gin.Context) {
 		ginCtx.JSON(400, gin.H{"error": "Invalid JSON"})
 		return
 	}
+	// 构造一个验证请求
+	variRequest := token.VerifyTokenRequest{UserId: userReq.UserId, Token: userReq.Token}
+	tokenService := ginCtx.Keys["tokenService"].(token.TokenService)
+	_, err := tokenService.VarifyToken(ginCtx, &variRequest)
+	if err != nil {
+		ginCtx.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	// 验证通过
 	userService := ginCtx.Keys["userService"].(user.UserService)
 	userResp, err1 := userService.Update(context.Background(), &userReq)
 	PanicIfUserError(err1)
 	//返回
 	ginCtx.JSON(http.StatusOK, user.UpdateResp{
 		UserId: userResp.UserId,
-		Token:  userResp.Token,
+		Msg:    userResp.Msg,
 	})
 }
 
@@ -115,6 +125,15 @@ func DeleteUser(ginCtx *gin.Context) {
 		ginCtx.JSON(400, gin.H{"error": "Invalid JSON"})
 		return
 	}
+	// 构造一个验证请求
+	variRequest := token.VerifyTokenRequest{UserId: userReq.UserId, Token: userReq.Token}
+	tokenService := ginCtx.Keys["tokenService"].(token.TokenService)
+	_, err := tokenService.VarifyToken(ginCtx, &variRequest)
+	if err != nil {
+		ginCtx.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	// 验证通过
 	userService := ginCtx.Keys["userService"].(user.UserService)
 	userResp, err1 := userService.Delete(context.Background(), &userReq)
 	PanicIfUserError(err1)

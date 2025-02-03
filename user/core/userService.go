@@ -129,7 +129,7 @@ func (*UserService) Update(ctx context.Context, req *services.UpdateReq, resp *s
 	}
 	// 判断该用户是否已经被删除
 	if user.DeleteAt == 1 {
-		resp.Token = "该用户已经被删除，登录失败"
+		resp.Msg = "该用户已经被删除，登录失败"
 		return nil
 	}
 	user.UpdateAt = time.Now()
@@ -140,10 +140,10 @@ func (*UserService) Update(ctx context.Context, req *services.UpdateReq, resp *s
 	user.Password = sha256.Sha256(req.Password)
 	info, err1 := model.NewUserDao().UpdateUserInfo(user)
 	if err1 != nil {
-		resp.Token = "失败"
+		resp.Msg = "失败"
 		return err1
 	}
-	resp.Token = "成功！"
+	resp.Msg = "成功！"
 	fmt.Println(info)
 	return nil
 }
@@ -154,18 +154,18 @@ func (*UserService) Delete(ctx context.Context, req *services.DeleteReq, resp *s
 	if user != nil {
 		resp.UserId = user.Id
 		if user.DeleteAt == 1 {
-			resp.Token = "当前用户已被删除，不可重复删除！"
+			resp.Msg = "当前用户已被删除，不可重复删除！"
 			return nil
 		}
 	}
 	if err != nil {
-		resp.Token = "查询该用户失败！"
+		resp.Msg = "查询该用户失败！"
 		return err
 	}
 	user.DeleteAt = 1
 	user.UpdateAt = time.Now()
 	info, err := model.NewUserDao().UpdateUserInfo(user)
-	resp.Token = "当前用户已成功删除！"
+	resp.Msg = "当前用户已成功删除！"
 	fmt.Println(info)
 	if err != nil {
 		return err

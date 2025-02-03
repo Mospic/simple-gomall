@@ -14,6 +14,15 @@ func PanicIfUserError(err error) {
 	}
 }
 
+// token包装错误
+func PanicIfTokenError(err error) {
+	if err != nil {
+		err = errors.New("tokenService--" + err.Error())
+		logging.Info(err)
+		panic(err)
+	}
+}
+
 // feed包装错误
 func PanicIfFeedError(err error) {
 	if err != nil {

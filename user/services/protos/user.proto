@@ -41,20 +41,24 @@ message UpdateReq {
   string avatar = 4;
   string backgroundImage = 5;
   string signature = 6;
+  string token = 7;
+  int32 user_id = 8;
 }
 
 message UpdateResp {
   int32 user_id = 1;
-  string Token = 2; //用户鉴权token
+  string msg = 2;
 }
 
 message DeleteReq {
   string email= 1;
+  string token = 2;
+  int32 user_id = 3;
 }
 
 message DeleteResp {
   int32 user_id = 1;
-  string Token = 2; //用户鉴权token
+  string msg = 2;
 }
 
 message User {
