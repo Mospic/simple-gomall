@@ -2,7 +2,6 @@ package main
 
 import (
 	"time"
-	//"user/utils/redis"
 
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
@@ -22,7 +21,7 @@ func main() {
 
 	microService := micro.NewService(
 		micro.Name("rpcProductService"), // 微服务名字
-		micro.Address("127.0.0.1:8082"),
+		micro.Address("127.0.0.1:8083"),
 		micro.Registry(etcdReg),         // etcd注册件
 		micro.RegisterTTL(24*time.Hour), // TTL时间
 		micro.Metadata(map[string]string{"protocol": "http"}),
@@ -30,7 +29,7 @@ func main() {
 
 	microService.Init()
 
-	_ = services.RegisterProductServiceHandler(microService.Server(), new(core.ProductService))
+	_ = services.RegisterProductCatalogServiceHandler(microService.Server(), new(core.ProductService))
 
 	_ = microService.Run()
 }
