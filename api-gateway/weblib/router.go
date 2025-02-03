@@ -23,9 +23,13 @@ func NewRouter(service map[string]interface{}) *gin.Engine {
 		// product
 		product := v1.Group("/product")
 		{
-			product.POST("/list/", handlers.ListProducts)
-			product.POST("/", handlers.ProductInfo)
-			product.POST("/search/", handlers.SearchProducts)
+			product.GET("/list/", handlers.ListProducts)
+			product.GET("/", handlers.ProductInfo)
+			product.GET("/search/", handlers.SearchProducts)
+
+			product.POST("/create/", handlers.CreateProducts)
+			product.POST("/delete/", handlers.DeleteProducts)
+			//product.POST("/update/", handlers.UpdateProducts)
 		}
 	}
 	return ginRouter

@@ -67,3 +67,36 @@ func SearchProducts(ginCtx *gin.Context) {
 	}
 	ginCtx.JSON(http.StatusOK, searchProductsResp)
 }
+
+// 创建Products
+func CreateProducts(ginCtx *gin.Context) {
+	var CreateProductsReq product.CreateProductsReq
+	if err := ginCtx.ShouldBindJSON(&CreateProductsReq); err != nil {
+		ginCtx.JSON(400, gin.H{"error": "Invalid JSON"})
+		return
+	}
+	productService := ginCtx.Keys["productService"].(product.ProductCatalogService)
+
+	CreateProductsResp, err := productService.CreateProducts(context.Background(), &CreateProductsReq)
+	if err != nil {
+		ginCtx.JSON(400, gin.H{"error": "Invalid Product"})
+		return
+	}
+	ginCtx.JSON(http.StatusOK, CreateProductsResp)
+}
+
+func DeleteProducts(ginCtx *gin.Context) {
+	var DeleteProductsReq product.DeleteProductsReq
+	if err := ginCtx.ShouldBindJSON(&DeleteProductsReq); err != nil {
+		ginCtx.JSON(400, gin.H{"error": "Invalid JSON"})
+		return
+	}
+	productService := ginCtx.Keys["productService"].(product.ProductCatalogService)
+
+	DeleteProductsResp, err := productService.DeleteProducts(context.Background(), &DeleteProductsReq)
+	if err != nil {
+		ginCtx.JSON(400, gin.H{"error": "Invalid Product"})
+		return
+	}
+	ginCtx.JSON(http.StatusOK, DeleteProductsResp)
+}

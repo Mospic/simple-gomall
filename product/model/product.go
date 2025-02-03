@@ -1,20 +1,18 @@
 package model
 
 import (
+	"gorm.io/gorm"
 	"sync"
-	"time"
 )
 
 type Product struct {
-	Id          uint32    `gorm:"primary_key;auto_increment"`
-	Name        string    `gorm:"default:(-):not null"`
-	Description string    `gorm:"default:(-)"`
-	Picture     string    `gorm:"default:(-)"`
-	Price       float32   `gorm:"default:0"`
-	Stock       int32     `gorm:"default:0"`
-	CreateAt    time.Time `gorm:"not null"`
-	UpdatedAt   time.Time `gorm:"not null"`
-	DeleteAt    time.Time `gorm:"default:NULL"`
+	gorm.Model
+	Id          uint32  `gorm:"primary_key;auto_increment"`
+	Name        string  `gorm:"not null"`
+	Description string  `gorm:"default:(-)"`
+	Picture     string  `gorm:"default:(-)"`
+	Price       float32 `gorm:"default:0"`
+	Stock       int32   `gorm:"default:0"`
 }
 
 func (Product) TableName() string {
@@ -94,4 +92,29 @@ func (d *ProductDao) SearchProducts(keyword string) ([]*Product, error) {
 		return nil, err
 	}
 	return productList, nil
+}
+
+func (d *ProductDao) CreateProduct(product *Product) (uint32, error) {
+	result := DB.Create(&product)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return product.Id, nil
+}
+
+func (d *ProductDao) UpdateProduct(product *Product) (uint32, error) {
+	result := DB.Save(&product)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return product.Id, nil
+}
+
+func (d *ProductDao) DeleteProduct(id uint32) error {
+	product := Product{Id: id}
+	result := DB.Delete(&product)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }

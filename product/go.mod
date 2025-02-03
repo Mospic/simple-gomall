@@ -4,12 +4,14 @@ go 1.23.3
 
 require (
 	github.com/gin-gonic/gin v1.8.2
-	github.com/go-ini/ini v1.44.0
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/golang/protobuf v1.5.4
 	github.com/jinzhu/gorm v1.9.16
 	github.com/micro/go-micro/v2 v2.9.1
 	google.golang.org/protobuf v1.34.1
+	gopkg.in/ini.v1 v1.67.0
+	gorm.io/driver/mysql v1.5.7
+	gorm.io/gorm v1.25.12
 )
 
 require (
@@ -77,7 +79,6 @@ require (
 	google.golang.org/genproto v0.0.0-20191216164720-4f79533eabd1 // indirect
 	google.golang.org/grpc v1.26.0 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
-	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
