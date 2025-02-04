@@ -1,15 +1,14 @@
 package main
 
 import (
-	"time"
-	"user/utils/redis"
-
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
+	"time"
 	"user/conf"
 	"user/core"
 	services "user/services"
+	"user/utils/redis"
 )
 
 func main() {
@@ -19,7 +18,6 @@ func main() {
 	etcdReg := etcd.NewRegistry(
 		registry.Addrs("127.0.0.1:2379"),
 	)
-
 	microService := micro.NewService(
 		micro.Name("rpcUserService"), // 微服务名字
 		micro.Address("127.0.0.1:8082"),

@@ -2,9 +2,14 @@ package core
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"strconv"
+	"strings"
 	"time"
 	"tokenutils/services"
+	"tokenutils/utils/redis"
 )
 
 var jwtSecret = []byte("1122233")
@@ -25,12 +30,11 @@ func (*TokenService) GetIdByToken(ctx context.Context, req *services.GetIdByToke
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (i interface{}, e error) { return jwtSecret, nil })
 	if tokenClaims != nil {
 		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
-			out.UserId = int32(claims.Id)
+			out.UserId = claims.Id
 			return nil
 		}
 	}
 	return err
-
 }
 
 func (*TokenService) GenerateTokenByID(ctx context.Context, req *services.GenerateTokenByIDRequest, out *services.GenerateTokenByIDResponse) error {
@@ -48,4 +52,38 @@ func (*TokenService) GenerateTokenByID(ctx context.Context, req *services.Genera
 	token, err := tokenClaims.SignedString(jwtSecret)
 	out.Token = token
 	return err
+}
+
+func (*TokenService) VarifyToken(ctx context.Context, req *services.VerifyTokenRequest, out *services.VerifyTokenResponse) error {
+	token := req.Token
+	// 1 .验证长度
+	parts := strings.Split(token, ".")
+	if len(parts) != 3 {
+		return errors.New("token format error")
+	}
+	// 2. 验证
+	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (i interface{}, e error) { return jwtSecret, nil })
+	if tokenClaims != nil {
+		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
+			// 判断当前用户是否匹配
+			if claims.Id != req.UserId {
+				fmt.Println(claims.Id)
+				return errors.New("错误！token对应的id不一致!")
+			}
+			out.Token = token
+			out.Status = "验证成功！"
+			return nil
+		}
+	}
+	return err
+}
+
+func (*TokenService) GetTokenByRedis(ctx context.Context, req *services.GetTokenByRedisRequest, out *services.GetTokenByRedisResponse) error {
+	key := strconv.Itoa(int(req.UserId))
+	token, err := redis.RdbJwt.Get(context.Background(), key).Result()
+	if err != nil {
+		return err
+	}
+	out.Token = token
+	return nil
 }

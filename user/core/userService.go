@@ -3,9 +3,11 @@ package core
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 	"user/model"
 	services "user/services"
+	"user/utils/redis"
 	"user/utils/sha256"
 )
 
@@ -31,6 +33,8 @@ func (*UserService) Login(ctx context.Context, req *services.LoginReq, resp *ser
 
 	user, err := model.NewUserDao().FindUserByEmail(email)
 	if err != nil {
+		resp.UserId = -1
+		resp.Token = ""
 		return err
 	}
 
@@ -41,7 +45,13 @@ func (*UserService) Login(ctx context.Context, req *services.LoginReq, resp *ser
 		return nil
 	}
 
-	resp.UserId = user.UserId
+	// 判断该用户是否已经被删除
+	if user.DeleteAt == 1 {
+		resp.Token = "该用户已经被删除，登录失败!"
+		return nil
+	}
+
+	resp.UserId = user.Id
 	return nil
 }
 
@@ -72,36 +82,29 @@ func (*UserService) Register(ctx context.Context, req *services.RegisterReq, res
 	//
 	////调用数据库方法，查询是否有同名实体
 	if user, err := model.NewUserDao().FindUserByEmail(email); err == nil {
-		resp.UserId = user.UserId
+		resp.UserId = user.Id
 		return nil
 	}
 	//
 	////创建一个dao层User实体
 	user := &model.User{
+		Name:     email,
 		Email:    email,
 		Password: sha256.Sha256(password),
-		Name:     email,
 		CreateAt: time.Now(),
+		UpdateAt: time.Now(),
 	}
 	//
-	////调用数据库方法，创建一个新的User实体
-	_, err := model.NewUserDao().CreateUser(user)
+	////调用数据库方法，创建一个新的User实体，返回用户id和err
+	userId, err := model.NewUserDao().CreateUser(user)
 	if err != nil {
 		resp.UserId = -1
 		resp.Token = ""
 		return err
 	}
-	//
-	////根据用户名，查询新用户的userId，作为返回值返回
-	user, _ = model.NewUserDao().FindUserByEmail(email)
-	//tokenService := services.NewTokenService("rpcTokenService", services.Client())
-	//generateRes, err := tokenService.GenerateTokenByID(ctx, generateReq)
-	//
-	////补充resp
-	//resp.StatusCode = 0
-	//resp.StatusMsg = "注册成功"
-	resp.UserId = user.UserId
+	resp.UserId = userId
 	fmt.Println("Success register user:", user)
+	// 写入token
 	resp.Token = ""
 	return nil
 }
@@ -122,12 +125,75 @@ func (*UserService) UserInfo(ctx context.Context, req *services.UserReq, resp *s
 	return nil
 }
 
+func (*UserService) Update(ctx context.Context, req *services.UpdateReq, resp *services.UpdateResp) error {
+	user, err := model.NewUserDao().FindUserByEmail(req.Email)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	// 判断该用户是否已经被删除
+	if user.DeleteAt == 1 {
+		resp.Msg = "该用户已经被删除，登录失败"
+		return nil
+	}
+	user.UpdateAt = time.Now()
+	user.Name = req.Name
+	user.Avatar = req.Avatar
+	user.BackgroundImage = req.BackgroundImage
+	user.Signature = req.Signature
+	user.Password = sha256.Sha256(req.Password)
+	info, err1 := model.NewUserDao().UpdateUserInfo(user)
+	if err1 != nil {
+		resp.Msg = "失败"
+		return err1
+	}
+	resp.Msg = "成功！"
+	fmt.Println(info)
+	return nil
+}
+
+func (*UserService) Delete(ctx context.Context, req *services.DeleteReq, resp *services.DeleteResp) error {
+	// 要删除这个人 先看看 这个人是不是已经被删除了
+	user, err := model.NewUserDao().FindUserByEmail(req.Email)
+	if user != nil {
+		resp.UserId = user.Id
+		if user.DeleteAt == 1 {
+			resp.Msg = "当前用户已被删除，不可重复删除！"
+			return nil
+		}
+	}
+	if err != nil {
+		resp.Msg = "查询该用户失败！"
+		return err
+	}
+	user.DeleteAt = 1
+	user.UpdateAt = time.Now()
+	info, err := model.NewUserDao().UpdateUserInfo(user)
+	resp.Msg = "当前用户已成功删除！"
+	fmt.Println(info)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (*UserService) Logout(ctx context.Context, req *services.LogoutReq, resp *services.LogoutResp) error {
+	// 从redis里面删除对应的键
+	err := redis.Rdb.Del(context.Background(), strconv.Itoa(int(req.UserId))).Err()
+	if err != nil {
+		return err
+	}
+	resp.UserId = req.UserId
+	resp.Msg = "用户已退出"
+	return nil
+}
+
 /*
 构建Service层user
 */
 func BuildProtoUser(item *model.User) *services.User {
 	user := services.User{
-		UserId: item.UserId,
+		UserId: item.Id,
 		Email:  item.Email,
 	}
 	return &user

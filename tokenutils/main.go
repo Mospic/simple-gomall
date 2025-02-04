@@ -6,9 +6,11 @@ import (
 	"github.com/micro/go-micro/v2/registry/etcd"
 	"tokenutils/core"
 	"tokenutils/services"
+	"tokenutils/utils/redis"
 )
 
 func main() {
+	redis.InitRedis()
 	etcdReg := etcd.NewRegistry(
 		registry.Addrs("127.0.0.1:2379"),
 	)
@@ -25,5 +27,4 @@ func main() {
 	_ = services.RegisterTokenServiceHandler(microService.Server(), new(core.TokenService))
 	// 启动微服务
 	_ = microService.Run()
-
 }

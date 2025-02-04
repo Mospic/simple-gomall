@@ -15,9 +15,17 @@ func NewRouter(service map[string]interface{}) *gin.Engine {
 		//user
 		user := v1.Group("/user")
 		{
+			user.GET("/", handlers.UserInfo)
 			user.POST("/register/", handlers.Register)
 			user.POST("/login/", handlers.Login)
-			user.GET("/", handlers.UserInfo)
+			user.POST("/update", handlers.Update)
+			user.POST("/delete", handlers.DeleteUser)
+			user.POST("/logout", handlers.Logout)
+		}
+		//token
+		token := v1.Group("/token")
+		{
+			token.POST("/varify", handlers.VarifyToken)
 		}
 
 		// product
