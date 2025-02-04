@@ -8,7 +8,6 @@ import (
 
 type CartService struct{}
 
-// 添加商品
 func (*CartService) AddItem(ctx context.Context, req *protos.AddItemReq, resp *protos.AddItemResp) error {
 	product := model.CartProduct{
 		ProductID: req.ProductId,

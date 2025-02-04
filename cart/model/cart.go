@@ -24,7 +24,7 @@ func AddCartItem(userID int64, product CartProduct) error {
 	var cart Cart
 	err := DB.Where("user_id = ?", userID).First(&cart).Error
 	if err != nil {
-		// 用户购物车不存在，创建新购物车
+		// 购物车不存在，创建购物车
 		products := []CartProduct{product}
 		productsJSON, _ := json.Marshal(products)
 		cart = Cart{
