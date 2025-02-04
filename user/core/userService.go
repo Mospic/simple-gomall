@@ -3,9 +3,11 @@ package core
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 	"user/model"
 	services "user/services"
+	"user/utils/redis"
 	"user/utils/sha256"
 )
 
@@ -172,6 +174,17 @@ func (*UserService) Delete(ctx context.Context, req *services.DeleteReq, resp *s
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (*UserService) Logout(ctx context.Context, req *services.LogoutReq, resp *services.LogoutResp) error {
+	// 从redis里面删除对应的键
+	err := redis.Rdb.Del(context.Background(), strconv.Itoa(int(req.UserId))).Err()
+	if err != nil {
+		return err
+	}
+	resp.UserId = req.UserId
+	resp.Msg = "用户已退出"
 	return nil
 }
 

@@ -45,6 +45,7 @@ type TokenService interface {
 	GetIdByToken(ctx context.Context, in *GetIdByTokenRequest, opts ...client.CallOption) (*GetIdByTokenResponse, error)
 	GenerateTokenByID(ctx context.Context, in *GenerateTokenByIDRequest, opts ...client.CallOption) (*GenerateTokenByIDResponse, error)
 	VarifyToken(ctx context.Context, in *VerifyTokenRequest, opts ...client.CallOption) (*VerifyTokenResponse, error)
+	GetTokenByRedis(ctx context.Context, in *GetTokenByRedisRequest, opts ...client.CallOption) (*GetTokenByRedisResponse, error)
 }
 
 type tokenService struct {
@@ -89,12 +90,23 @@ func (c *tokenService) VarifyToken(ctx context.Context, in *VerifyTokenRequest, 
 	return out, nil
 }
 
+func (c *tokenService) GetTokenByRedis(ctx context.Context, in *GetTokenByRedisRequest, opts ...client.CallOption) (*GetTokenByRedisResponse, error) {
+	req := c.c.NewRequest(c.name, "TokenService.GetTokenByRedis", in)
+	out := new(GetTokenByRedisResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for TokenService service
 
 type TokenServiceHandler interface {
 	GetIdByToken(context.Context, *GetIdByTokenRequest, *GetIdByTokenResponse) error
 	GenerateTokenByID(context.Context, *GenerateTokenByIDRequest, *GenerateTokenByIDResponse) error
 	VarifyToken(context.Context, *VerifyTokenRequest, *VerifyTokenResponse) error
+	GetTokenByRedis(context.Context, *GetTokenByRedisRequest, *GetTokenByRedisResponse) error
 }
 
 func RegisterTokenServiceHandler(s server.Server, hdlr TokenServiceHandler, opts ...server.HandlerOption) error {
@@ -102,6 +114,7 @@ func RegisterTokenServiceHandler(s server.Server, hdlr TokenServiceHandler, opts
 		GetIdByToken(ctx context.Context, in *GetIdByTokenRequest, out *GetIdByTokenResponse) error
 		GenerateTokenByID(ctx context.Context, in *GenerateTokenByIDRequest, out *GenerateTokenByIDResponse) error
 		VarifyToken(ctx context.Context, in *VerifyTokenRequest, out *VerifyTokenResponse) error
+		GetTokenByRedis(ctx context.Context, in *GetTokenByRedisRequest, out *GetTokenByRedisResponse) error
 	}
 	type TokenService struct {
 		tokenService
@@ -124,4 +137,8 @@ func (h *tokenServiceHandler) GenerateTokenByID(ctx context.Context, in *Generat
 
 func (h *tokenServiceHandler) VarifyToken(ctx context.Context, in *VerifyTokenRequest, out *VerifyTokenResponse) error {
 	return h.TokenServiceHandler.VarifyToken(ctx, in, out)
+}
+
+func (h *tokenServiceHandler) GetTokenByRedis(ctx context.Context, in *GetTokenByRedisRequest, out *GetTokenByRedisResponse) error {
+	return h.TokenServiceHandler.GetTokenByRedis(ctx, in, out)
 }

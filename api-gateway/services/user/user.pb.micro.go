@@ -47,6 +47,7 @@ type UserService interface {
 	UserInfo(ctx context.Context, in *UserReq, opts ...client.CallOption) (*UserResp, error)
 	Update(ctx context.Context, in *UpdateReq, opts ...client.CallOption) (*UpdateResp, error)
 	Delete(ctx context.Context, in *DeleteReq, opts ...client.CallOption) (*DeleteResp, error)
+	Logout(ctx context.Context, in *LogoutReq, opts ...client.CallOption) (*LogoutResp, error)
 }
 
 type userService struct {
@@ -111,6 +112,16 @@ func (c *userService) Delete(ctx context.Context, in *DeleteReq, opts ...client.
 	return out, nil
 }
 
+func (c *userService) Logout(ctx context.Context, in *LogoutReq, opts ...client.CallOption) (*LogoutResp, error) {
+	req := c.c.NewRequest(c.name, "UserService.Logout", in)
+	out := new(LogoutResp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for UserService service
 
 type UserServiceHandler interface {
@@ -119,6 +130,7 @@ type UserServiceHandler interface {
 	UserInfo(context.Context, *UserReq, *UserResp) error
 	Update(context.Context, *UpdateReq, *UpdateResp) error
 	Delete(context.Context, *DeleteReq, *DeleteResp) error
+	Logout(context.Context, *LogoutReq, *LogoutResp) error
 }
 
 func RegisterUserServiceHandler(s server.Server, hdlr UserServiceHandler, opts ...server.HandlerOption) error {
@@ -128,6 +140,7 @@ func RegisterUserServiceHandler(s server.Server, hdlr UserServiceHandler, opts .
 		UserInfo(ctx context.Context, in *UserReq, out *UserResp) error
 		Update(ctx context.Context, in *UpdateReq, out *UpdateResp) error
 		Delete(ctx context.Context, in *DeleteReq, out *DeleteResp) error
+		Logout(ctx context.Context, in *LogoutReq, out *LogoutResp) error
 	}
 	type UserService struct {
 		userService
@@ -158,4 +171,8 @@ func (h *userServiceHandler) Update(ctx context.Context, in *UpdateReq, out *Upd
 
 func (h *userServiceHandler) Delete(ctx context.Context, in *DeleteReq, out *DeleteResp) error {
 	return h.UserServiceHandler.Delete(ctx, in, out)
+}
+
+func (h *userServiceHandler) Logout(ctx context.Context, in *LogoutReq, out *LogoutResp) error {
+	return h.UserServiceHandler.Logout(ctx, in, out)
 }

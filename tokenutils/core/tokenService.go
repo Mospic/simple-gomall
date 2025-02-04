@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"strconv"
 	"strings"
 	"time"
 	"tokenutils/services"
+	"tokenutils/utils/redis"
 )
 
 var jwtSecret = []byte("1122233")
@@ -74,4 +76,14 @@ func (*TokenService) VarifyToken(ctx context.Context, req *services.VerifyTokenR
 		}
 	}
 	return err
+}
+
+func (*TokenService) GetTokenByRedis(ctx context.Context, req *services.GetTokenByRedisRequest, out *services.GetTokenByRedisResponse) error {
+	key := strconv.Itoa(int(req.UserId))
+	token, err := redis.RdbJwt.Get(context.Background(), key).Result()
+	if err != nil {
+		return err
+	}
+	out.Token = token
+	return nil
 }

@@ -10,6 +10,7 @@ service UserService {
   rpc UserInfo(UserReq) returns(UserResp) {}
   rpc Update(UpdateReq) returns(UpdateResp) {}
   rpc Delete(DeleteReq) returns(DeleteResp) {}
+  rpc Logout(LogoutReq) returns(LogoutResp) {}
 }
 
 message RegisterReq {
@@ -57,6 +58,16 @@ message DeleteReq {
 }
 
 message DeleteResp {
+  int32 user_id = 1;
+  string msg = 2;
+}
+
+message LogoutReq {
+  int32 user_id = 1;
+  string token = 2;
+}
+
+message LogoutResp {
   int32 user_id = 1;
   string msg = 2;
 }

@@ -20,6 +20,7 @@ func NewRouter(service map[string]interface{}) *gin.Engine {
 			user.POST("/login/", handlers.Login)
 			user.POST("/update", handlers.Update)
 			user.POST("/delete", handlers.DeleteUser)
+			user.POST("/logout", handlers.Logout)
 		}
 		//token
 		token := v1.Group("/token")

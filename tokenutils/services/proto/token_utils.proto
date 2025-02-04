@@ -9,6 +9,14 @@ message GetIdByToken_response {
   int32 user_id = 1; // 用户id
 }
 
+message GetTokenByRedis_request {
+  int32 user_id = 1; // 用户id
+}
+
+message GetTokenByRedis_response {
+  string token = 1; // token
+}
+
 message GenerateTokenByID_request {
   int32 user_id = 1; // 用户id
 }
@@ -31,5 +39,6 @@ service TokenService{
   rpc GetIdByToken(GetIdByToken_request) returns (GetIdByToken_response);
   rpc GenerateTokenByID(GenerateTokenByID_request) returns (GenerateTokenByID_response);
   rpc VarifyToken(VerifyToken_request) returns (VerifyToken_response);
+  rpc GetTokenByRedis(GetTokenByRedis_request) returns (GetTokenByRedis_response);
 }
 
