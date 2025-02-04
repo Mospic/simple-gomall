@@ -24,7 +24,7 @@ func AddCartItem(userID int64, product CartProduct) error {
 	var cart Cart
 	err := DB.Where("user_id = ?", userID).First(&cart).Error
 	if err != nil {
-		//用户购物车不存在,自动创建
+		// 用户购物车不存在，创建新购物车
 		products := []CartProduct{product}
 		productsJSON, _ := json.Marshal(products)
 		cart = Cart{
@@ -34,9 +34,9 @@ func AddCartItem(userID int64, product CartProduct) error {
 		}
 		return DB.Create(&cart).Error
 	}
-
 	var products []CartProduct
 	json.Unmarshal(cart.Products, &products)
+
 	found := false
 	for i, p := range products {
 		if p.ProductID == product.ProductID {
@@ -48,20 +48,22 @@ func AddCartItem(userID int64, product CartProduct) error {
 	if !found {
 		products = append(products, product)
 	}
-	total_price := 0.0
+
+	totalPrice := 0.0
 	for _, p := range products {
-		total_price += float64(p.Quantity) * p.UnitPrice
+		totalPrice += float64(p.Quantity) * p.UnitPrice
 	}
 
 	productsJSON, _ := json.Marshal(products)
 	return DB.Model(&cart).Updates(Cart{
 		Products:   productsJSON,
-		TotalPrice: total_price,
+		TotalPrice: totalPrice,
 	}).Error
 }
 
-func RemoveCartItem(userID int64, productID int64) error {
+func RemoveCartItem(userID, productID int64) error {
 	var cart Cart
+
 	err := DB.Where("user_id = ?", userID).First(&cart).Error
 	if err != nil {
 		return err
@@ -69,18 +71,20 @@ func RemoveCartItem(userID int64, productID int64) error {
 
 	var products []CartProduct
 	json.Unmarshal(cart.Products, &products)
+
 	newProducts := []CartProduct{}
-	total_price := 0.0
+	totalPrice := 0.0
 	for _, p := range products {
 		if p.ProductID != productID {
 			newProducts = append(newProducts, p)
-			total_price += float64(p.Quantity) * p.UnitPrice
+			totalPrice += float64(p.Quantity) * p.UnitPrice
 		}
 	}
+
 	productsJSON, _ := json.Marshal(newProducts)
 	return DB.Model(&cart).Updates(Cart{
 		Products:   productsJSON,
-		TotalPrice: total_price,
+		TotalPrice: totalPrice,
 	}).Error
 }
 
@@ -90,7 +94,9 @@ func GetCartItems(userID int64) ([]CartProduct, float64, error) {
 	if err != nil {
 		return nil, 0, err
 	}
+
 	var products []CartProduct
 	json.Unmarshal(cart.Products, &products)
+
 	return products, cart.TotalPrice, nil
 }
