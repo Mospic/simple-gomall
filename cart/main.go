@@ -3,21 +3,28 @@ package main
 import (
 	"cart/conf"
 	"cart/core"
-	"cart/rpc_server/etcd"
-	protos "cart/services"
+	services "cart/services"
 	"github.com/micro/go-micro/v2"
+	"github.com/micro/go-micro/v2/registry"
+	"github.com/micro/go-micro/v2/registry/etcd"
+	"time"
 )
 
 func main() {
 	conf.Init()
+	etcdReg := etcd.NewRegistry(registry.Addrs("127.0.0.1:2379"))
 
 	microService := micro.NewService(
 		micro.Name("rpcCartService"),
-		micro.Registry(etcd.EtcdReg),
+		micro.Address("127.0.0.1:8084"),
+		micro.Registry(etcdReg),
+		micro.RegisterTTL(24*time.Hour),
+		micro.Metadata(map[string]string{"protocol": "http"}),
 	)
 
 	microService.Init()
 
-	_ = protos.RegisterCartServiceHandler(microService.Server(), new(core.CartService))
+	_ = services.RegisterCartServiceHandler(microService.Server(), new(core.CartService))
+
 	_ = microService.Run()
 }

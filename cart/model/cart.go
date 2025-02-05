@@ -21,6 +21,7 @@ type CartProduct struct {
 }
 
 func AddCartItem(userID int64, product CartProduct) error {
+	now := time.Now()
 	var cart Cart
 	err := DB.Where("user_id = ?", userID).First(&cart).Error
 	if err != nil {
@@ -31,6 +32,8 @@ func AddCartItem(userID int64, product CartProduct) error {
 			UserID:     userID,
 			Products:   productsJSON,
 			TotalPrice: product.UnitPrice * float64(product.Quantity),
+			CreateAt:   now,
+			UpdateAt:   now,
 		}
 		return DB.Create(&cart).Error
 	}

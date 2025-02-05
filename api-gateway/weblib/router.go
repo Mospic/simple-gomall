@@ -39,6 +39,14 @@ func NewRouter(service map[string]interface{}) *gin.Engine {
 			product.POST("/delete/", handlers.DeleteProducts)
 			//product.POST("/update/", handlers.UpdateProducts)
 		}
+
+		//cart
+		cart := v1.Group("/cart")
+		{
+			cart.POST("/add", handlers.AddItem)
+			cart.GET("/get", handlers.GetCart)
+			cart.POST("/remove", handlers.RemoveItem)
+		}
 	}
 	return ginRouter
 }

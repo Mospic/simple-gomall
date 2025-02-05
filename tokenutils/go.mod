@@ -51,12 +51,14 @@ require (
 	go.uber.org/multierr v1.3.0 // indirect
 	go.uber.org/tools v0.0.0-20190618225709-2cfd321de3ee // indirect
 	go.uber.org/zap v1.13.0 // indirect
-	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37 // indirect
+	golang.org/x/crypto v0.32.0 // indirect
 	golang.org/x/lint v0.0.0-20191125180803-fdd1cda4f05f // indirect
-	golang.org/x/net v0.0.0-20210428140749-89ef3d95e781 // indirect
-	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
-	golang.org/x/text v0.3.6 // indirect
-	golang.org/x/tools v0.0.0-20191216173652-a0e659d51361 // indirect
+	golang.org/x/mod v0.17.0 // indirect
+	golang.org/x/net v0.34.0 // indirect
+	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
 	google.golang.org/genproto v0.0.0-20191216164720-4f79533eabd1 // indirect
 	google.golang.org/grpc v1.26.0 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
